@@ -912,42 +912,11 @@ class MigrationAutodetector:
             old_field_name = self.renamed_fields.get((app_label, model_name, field_name), field_name)
             old_field = self.old_apps.get_model(app_label, old_model_name)._meta.get_field(old_field_name)
             new_field = self.new_apps.get_model(app_label, model_name)._meta.get_field(field_name)
-            dependencies = []
-            # Implement any model renames on relations; these are handled by RenameModel
-            # so we need to exclude them from the comparison
-            if hasattr(new_field, "remote_field") and getattr(new_field.remote_field, "model", None):
-                rename_key = (
-                    new_field.remote_field.model._meta.app_label,
-                    new_field.remote_field.model._meta.model_name,
-                )
-                if rename_key in self.renamed_models:
-                    new_field.remote_field.model = old_field.remote_field.model
-                # Handle ForeignKey which can only have a single to_field.
-                remote_field_name = getattr(new_field.remote_field, 'field_name', None)
-                if remote_field_name:
-                    to_field_rename_key = rename_key + (remote_field_name,)
-                    if to_field_rename_key in self.renamed_fields:
-                        new_field.remote_field.field_name = old_field.remote_field.field_name
-                # Handle ForeignObjects which can have multiple from_fields/to_fields.
-                from_fields = getattr(new_field, 'from_fields', None)
-                if from_fields:
-                    from_rename_key = (app_label, model_name)
-                    new_field.from_fields = tuple([
-                        self.renamed_fields.get(from_rename_key + (from_field,), from_field)
-                        for from_field in from_fields
-                    ])
-                    new_field.to_fields = tuple([
-                        self.renamed_fields.get(rename_key + (to_field,), to_field)
-                        for to_field in new_field.to_fields
-                    ])
-                dependencies.extend(self._get_dependencies_for_foreign_key(new_field))
-            if hasattr(new_field, "remote_field") and getattr(new_field.remote_field, "through", None):
-                rename_key = (
-                    new_field.remote_field.through._meta.app_label,
-                    new_field.remote_field.through._meta.model_name,
-                )
-                if rename_key in self.renamed_models:
-                    new_field.remote_field.through = old_field.remote_field.through
+
+            # Implement any model renames on relations; these are handled by
+            # RenameModel but to maintain the migration states of the old app
+            # we need to include them in the comparison.
+
             old_field_dec = self.deep_deconstruct(old_field)
             new_field_dec = self.deep_deconstruct(new_field)
             if old_field_dec != new_field_dec:
