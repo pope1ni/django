@@ -474,12 +474,10 @@ class CombinedExpression(SQLiteNumericMixin, Expression):
     def as_sql(self, compiler, connection):
         expressions = []
         expression_params = []
-        sql, params = compiler.compile(self.lhs)
-        expressions.append(sql)
-        expression_params.extend(params)
-        sql, params = compiler.compile(self.rhs)
-        expressions.append(sql)
-        expression_params.extend(params)
+        for x in (self.lhs, self.rhs):
+            sql, params = compiler.compile(x)
+            expressions.append(sql)
+            expression_params.extend(params)
         # order of precedence
         expression_wrapper = '(%s)'
         sql = connection.ops.combine_expression(self.connector, expressions)
@@ -531,12 +529,10 @@ class DurationExpression(CombinedExpression):
         connection.ops.check_expression_support(self)
         expressions = []
         expression_params = []
-        sql, params = self.compile(self.lhs, compiler, connection)
-        expressions.append(sql)
-        expression_params.extend(params)
-        sql, params = self.compile(self.rhs, compiler, connection)
-        expressions.append(sql)
-        expression_params.extend(params)
+        for x in (self.lhs, self.rhs):
+            sql, params = self.compile(x, compiler, connection)
+            expressions.append(sql)
+            expression_params.extend(params)
         # order of precedence
         expression_wrapper = '(%s)'
         sql = connection.ops.combine_duration_expression(self.connector, expressions)
