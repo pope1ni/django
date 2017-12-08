@@ -172,14 +172,10 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             **settings_dict['OPTIONS'],
         }
         conn_params.pop('isolation_level', None)
-        if settings_dict['USER']:
-            conn_params['user'] = settings_dict['USER']
-        if settings_dict['PASSWORD']:
-            conn_params['password'] = settings_dict['PASSWORD']
-        if settings_dict['HOST']:
-            conn_params['host'] = settings_dict['HOST']
-        if settings_dict['PORT']:
-            conn_params['port'] = settings_dict['PORT']
+        conn_params.update(
+            (key.lower(), settings_dict[key]) for key in
+            ('USER', 'PASSWORD', 'HOST', 'PORT') if settings_dict[key]
+        )
         return conn_params
 
     @async_unsafe
