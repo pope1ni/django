@@ -221,7 +221,7 @@ class BoundField:
 
     def build_widget_attrs(self, attrs, widget=None):
         widget = widget or self.field.widget
-        attrs = dict(attrs)  # Copy attrs to avoid modifying the argument.
+        attrs = attrs.copy()  # Copy attrs to avoid modifying the argument.
         if widget.use_required_attribute(self.initial) and self.field.required and self.form.use_required_attribute:
             attrs['required'] = True
         if self.field.disabled:

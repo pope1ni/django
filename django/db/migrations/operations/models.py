@@ -81,7 +81,7 @@ class CreateModel(ModelOperation):
             app_label,
             self.name,
             list(self.fields),
-            dict(self.options),
+            self.options.copy(),
             tuple(self.bases),
             list(self.managers),
         ))

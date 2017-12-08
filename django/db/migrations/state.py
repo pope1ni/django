@@ -545,7 +545,7 @@ class ModelState:
             # Since options are shallow-copied here, operations such as
             # AddIndex must replace their option (e.g 'indexes') rather
             # than mutating it.
-            options=dict(self.options),
+            options=self.options.copy(),
             bases=self.bases,
             managers=list(self.managers),
         )
