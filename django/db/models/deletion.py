@@ -106,12 +106,9 @@ class Collector:
         """
         if not objs:
             return []
-        new_objs = []
         model = objs[0].__class__
         instances = self.data[model]
-        for obj in objs:
-            if obj not in instances:
-                new_objs.append(obj)
+        new_objs = [obj for obj in objs if obj not in instances]
         instances.update(new_objs)
         # Nullable relationships can be ignored -- they are nulled out before
         # deleting, and therefore do not affect the order in which objects have

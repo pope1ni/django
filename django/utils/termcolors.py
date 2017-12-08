@@ -47,9 +47,7 @@ def colorize(text='', opts=(), **kwargs):
             code_list.append(foreground[v])
         elif k == 'bg':
             code_list.append(background[v])
-    for o in opts:
-        if o in opt_dict:
-            code_list.append(opt_dict[o])
+    code_list.extend(opt_dict[o] for o in opts if o in opt_dict)
     if 'noreset' not in opts:
         text = '%s\x1b[%sm' % (text or '', RESET)
     return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
