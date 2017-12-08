@@ -445,9 +445,7 @@ class SnapToGrid(SQLiteDecimalToFloatMixin, GeomOutputGeoFunc):
         nargs = len(args)
         expressions = [expression]
         if nargs in (1, 2):
-            expressions.extend(
-                [self._handle_param(arg, '', NUMERIC_TYPES) for arg in args]
-            )
+            expressions.extend(self._handle_param(arg, '', NUMERIC_TYPES) for arg in args)
         elif nargs == 4:
             # Reverse origin and size param ordering
             expressions += [

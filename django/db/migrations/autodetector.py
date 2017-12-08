@@ -1297,7 +1297,7 @@ class MigrationAutodetector:
         old_required_apps = None
         while old_required_apps != required_apps:
             old_required_apps = set(required_apps)
-            required_apps.update(*[app_dependencies.get(app_label, ()) for app_label in required_apps])
+            required_apps.update(*(app_dependencies.get(app_label, ()) for app_label in required_apps))
         # Remove all migrations that aren't needed
         for app_label in list(changes):
             if app_label not in required_apps:
