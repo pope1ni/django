@@ -75,7 +75,7 @@ class CursorWrapper:
             # Map some error codes to IntegrityError, since they seem to be
             # misclassified and Django would prefer the more logical place.
             if e.args[0] in self.codes_for_integrityerror:
-                raise IntegrityError(*tuple(e.args))
+                raise IntegrityError(*e.args)
             raise
 
     def executemany(self, query, args):
@@ -85,7 +85,7 @@ class CursorWrapper:
             # Map some error codes to IntegrityError, since they seem to be
             # misclassified and Django would prefer the more logical place.
             if e.args[0] in self.codes_for_integrityerror:
-                raise IntegrityError(*tuple(e.args))
+                raise IntegrityError(*e.args)
             raise
 
     def __getattr__(self, attr):

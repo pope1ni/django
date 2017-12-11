@@ -82,7 +82,7 @@ def wrap_oracle_errors():
             x.code == 2091 and
             ('ORA-02291' in x.message or 'ORA-00001' in x.message)
         ):
-            raise IntegrityError(*tuple(e.args))
+            raise IntegrityError(*e.args)
         raise
 
 
