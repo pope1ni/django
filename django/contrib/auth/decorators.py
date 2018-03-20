@@ -45,9 +45,7 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
+    return actual_decorator(function) if function else actual_decorator
 
 
 def permission_required(perm, login_url=None, raise_exception=False):

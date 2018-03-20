@@ -13,6 +13,4 @@ def staff_member_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAM
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )
-    if view_func:
-        return actual_decorator(view_func)
-    return actual_decorator
+    return actual_decorator(view_func) if view_func else actual_decorator
