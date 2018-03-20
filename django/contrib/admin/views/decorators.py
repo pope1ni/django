@@ -2,7 +2,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 
 
-def staff_member_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAME,
+def staff_member_required(view_func=None, *, redirect_field_name=REDIRECT_FIELD_NAME,
                           login_url='admin:login', raise_exception=False):
     """
     Decorator for views that checks that the user is logged in and is a staff
