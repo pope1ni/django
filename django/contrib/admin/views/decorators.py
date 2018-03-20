@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 def staff_member_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAME,
-                          login_url='admin:login'):
+                          login_url='admin:login', raise_exception=False):
     """
     Decorator for views that checks that the user is logged in and is a staff
     member, redirecting to the login page if necessary.
@@ -12,5 +12,6 @@ def staff_member_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAM
         lambda u: u.is_active and u.is_staff,
         login_url=login_url,
         redirect_field_name=redirect_field_name
+        raise_exception=raise_exception,
     )
     return actual_decorator(view_func) if view_func else actual_decorator
