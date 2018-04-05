@@ -116,3 +116,21 @@ class PermissionsRequiredDecoratorTest(TestCase):
         request.user = self.user
         with self.assertRaises(PermissionDenied):
             a_view(request)
+
+    def test_login_then_exception_raised(self):
+        """
+        Pattern to avoid redirect loop.
+        """
+        @login_required
+        @permission_required(['nonexistent-permission'], raise_exception=True)
+        def a_view(request):
+            return HttpResponse()
+
+        request = self.factory.get('/rand')
+        request.user = models.AnonymousUser()
+        resp = a_view(request)
+        self.assertEqual(resp.status_code, 302)
+
+        request.user = self.user
+        with self.assertRaises(PermissionDenied):
+            a_view(request)
