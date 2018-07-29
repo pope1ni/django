@@ -1,5 +1,6 @@
 import functools
 import re
+import unittest
 from unittest import mock
 
 from django.apps import apps
@@ -1717,6 +1718,24 @@ class AutodetectorTests(TestCase):
             'testapp_authorproxy',
         )
         self.assertEqual(changes['otherapp'][0].operations[0].field.remote_field.field_name, 'author_ptr')
+
+    @unittest.expectedFailure
+    def test_rename_proxy_base(self):  # XXX: 26488:c13
+        changes = self.get_changes(
+            [],
+            [self.author_empty, self.author_proxy],
+        )
+        print(changes)
+        changes = self.get_changes(
+            [self.author_empty, self.author_proxy],
+            [self.author_empty, self.author_proxy],
+        )
+        print(changes)
+        self.fail('Not implemented yet.')
+
+    @unittest.expectedFailure
+    def test_rename_mti_base(self):  # XXX: 26488
+        self.fail('Not implemented yet.')
 
     def test_unmanaged_create(self):
         """The autodetector correctly deals with managed models."""
