@@ -77,7 +77,7 @@ class AddField(FieldOperation):
         if self.preserve_default is not True:
             kwargs['preserve_default'] = self.preserve_default
         return (
-            self.__class__.__name__,
+            self.__class__.__qualname__,
             [],
             kwargs
         )
@@ -152,7 +152,7 @@ class RemoveField(FieldOperation):
             'name': self.name,
         }
         return (
-            self.__class__.__name__,
+            self.__class__.__qualname__,
             [],
             kwargs
         )
@@ -208,7 +208,7 @@ class AlterField(FieldOperation):
         if self.preserve_default is not True:
             kwargs['preserve_default'] = self.preserve_default
         return (
-            self.__class__.__name__,
+            self.__class__.__qualname__,
             [],
             kwargs
         )
@@ -293,7 +293,7 @@ class RenameField(FieldOperation):
             'new_name': self.new_name,
         }
         return (
-            self.__class__.__name__,
+            self.__class__.__qualname__,
             [],
             kwargs
         )
