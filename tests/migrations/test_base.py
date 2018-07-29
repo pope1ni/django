@@ -194,6 +194,7 @@ class OperationTestBase(MigrationTestBase):
         multicol_index=False, related_model=False, mti_model=False,
         proxy_model=False, manager_model=False, unique_together=False,
         options=False, db_table=None, index_together=False, constraints=None,
+        base_model=False,
     ):
         """Creates a test model state and database table."""
         # Make the "current" state.
@@ -274,6 +275,10 @@ class OperationTestBase(MigrationTestBase):
                 fields=[],
                 options={'proxy': True},
                 bases=['%s.Pony' % app_label],
+            ))
+        if base_model:
+            operations.append(migrations.CreateModel(
+                ...  # FIXME
             ))
         if manager_model:
             from .models import FoodManager, FoodQuerySet

@@ -41,7 +41,7 @@ class ModelOperation(Operation):
 class CreateModel(ModelOperation):
     """Create a model's table."""
 
-    serialization_expand_args = ['fields', 'options', 'managers']
+    serialization_expand_args = ['fields', 'options', 'bases', 'managers']
 
     def __init__(self, name, fields, options=None, bases=None, managers=None):
         self.fields = fields
@@ -655,6 +655,36 @@ class AlterModelOptions(ModelOptionOperation):
     @property
     def migration_name_fragment(self):
         return 'alter_%s_options' % self.name_lower
+
+
+class AlterModelBases(ModelOptionOperation):
+    """Alter the model's bases."""
+
+    serialization_expand_args = ['bases']
+
+    def __init__(self, name, bases):
+        self.bases = bases or (models.Model,)
+        super().__init__(name)
+
+    def deconstruct(self):
+        return self.__class__.__qualname__, [], {
+            'name': self.name,
+            'bases': self.bases,
+        }
+
+    def state_forwards(self, app_label, state):
+        model_state = state.models[app_label, self.name_lower]
+        model_state.bases = tuple(self.bases)
+        state.reload_model(app_label, self.name_lower, delay=True)
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        pass
+
+    def database_backwards(self, app_label, schema_editor, from_state, to_state):
+        pass
+
+    def describe(self):
+        return 'Change bases on %s' % self.name
 
 
 class AlterModelManagers(ModelOptionOperation):

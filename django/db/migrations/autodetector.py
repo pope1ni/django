@@ -167,6 +167,7 @@ class MigrationAutodetector:
         self.generate_deleted_proxies()
         self.generate_created_proxies()
         self.generate_altered_options()
+        self.generate_altered_bases()
         self.generate_altered_managers()
 
         # Create the altered indexes and store them in self.altered_indexes.
@@ -1213,6 +1214,20 @@ class MigrationAutodetector:
                         order_with_respect_to=new_model_state.options.get('order_with_respect_to'),
                     ),
                     dependencies=dependencies,
+                )
+
+    def generate_altered_bases(self):
+        for app_label, model_name in sorted(self.kept_model_keys):
+            old_model_name = self.renamed_models.get((app_label, model_name), model_name)
+            old_model_state = self.from_state.models[app_label, old_model_name]
+            new_model_state = self.to_state.models[app_label, model_name]
+            if old_model_state.bases != new_model_state.bases:
+                self.add_operation(
+                    app_label,
+                    operations.AlterModelBases(
+                        name=model_name,
+                        bases=new_model_state.bases,
+                    )
                 )
 
     def generate_altered_managers(self):

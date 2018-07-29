@@ -2486,6 +2486,49 @@ class OperationTests(OperationTestBase):
         self.assertEqual(definition[1], [])
         self.assertEqual(definition[2], {'name': "Rider", 'order_with_respect_to': "pony"})
 
+    def test_alter_model_bases(self):
+        """
+        The bases on a model are set.
+        """
+        project_state = self.set_up_test_model('test_almoma')
+        # Test the state alteration
+        operation = migrations.AlterModelBases(
+            'Pony',
+            bases=(..., ),  # FIXME
+        )
+        self.assertEqual(operation.describe(), 'Change bases on Pony')
+        bases = project_state.models['test_almoma', 'pony'].bases
+        self.assertEqual(bases, ())  # FIXME
+
+        new_state = project_state.clone()
+        operation.state_forwards('test_almoma', new_state)
+        self.assertIn(('test_almoma', 'pony'), new_state.models)
+        bases = new_state.models['test_almoma', 'pony'].bases
+        self.assertEqual(bases, ...)  # FIXME
+        self.assertIsInstance(bases, ...)  # FIXME
+        rendered_state = new_state.apps
+        model = rendered_state.get_model('test_almoma', 'pony')
+        self.assertIsInstance(model, models.Model)
+        self.assertIsInstance(model, ...)  # FIXME
+
+    def test_alter_model_bases_emptying(self):
+        """
+        The bases on a model are set.
+        """
+        project_state = self.set_up_test_model('test_almomae', base_model=True)
+        # Test the state alteration
+        operation = migrations.AlterModelBases('Food', bases=())
+        self.assertEqual(operation.describe(), 'Change bases on Food')
+        self.assertIn(('test_almomae', 'food'), project_state.models)
+        bases = project_state.models['test_almomae', 'food'].bases
+        self.assertEqual(bases, ...)  # FIXME
+        self.assertIsInstance(bases, ...)  # FIXME
+
+        new_state = project_state.clone()
+        operation.state_forwards('test_almomae', new_state)
+        bases = new_state.models['test_almomae', 'food'].bases
+        self.assertEqual(bases, ())
+
     def test_alter_model_managers(self):
         """
         The managers on a model are set.

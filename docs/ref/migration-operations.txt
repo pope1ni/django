@@ -50,7 +50,7 @@ The field instance should be an unbound field (so just
 
 ``options`` is an optional dictionary of values from the model's ``Meta`` class.
 
-``bases`` is an optional list of other classes to have this model inherit from;
+``bases`` is an optional tuple of other classes to have this model inherit from;
 it can contain both class objects as well as strings in the format
 ``"appname.ModelName"`` if you want to depend on another model (so you inherit
 from the historical version). If it's not supplied, it defaults to inheriting
@@ -124,6 +124,15 @@ Stores changes to miscellaneous model options (settings on a model's ``Meta``)
 like ``permissions`` and ``verbose_name``. Does not affect the database, but
 persists these changes for :class:`RunPython` instances to use. ``options``
 should be a dictionary mapping option names to values.
+
+``AlterModelBases``
+----------------------
+
+.. class:: AlterModelBases(name, bases)
+
+.. versionadded:: 3.0
+
+Alters the base models inherited by the model.
 
 ``AlterModelManagers``
 ----------------------

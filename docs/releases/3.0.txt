@@ -255,6 +255,11 @@ Management Commands
   options now support templates stored in XZ archives (``.tar.xz``, ``.txz``)
   and LZMA archives (``.tar.lzma``, ``.tlz``).
 
+Migrations
+~~~~~~~~~~
+
+* Added :class:`AlterModelBases` operation to allow changing model bases.
+
 Models
 ~~~~~~
 
