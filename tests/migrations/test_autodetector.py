@@ -1751,6 +1751,10 @@ class AutodetectorTests(TestCase):
         print(changes['testapp'][0].operations)
         self.fail('Not implemented yet.')
 
+    @unittest.expectedFailure
+    def test_change_mti_to_abstract(self):  # XXX: 25247
+        self.fail('Not implemented yet.')
+
     def test_unmanaged_create(self):
         """The autodetector correctly deals with managed models."""
         # First, we test adding an unmanaged model
