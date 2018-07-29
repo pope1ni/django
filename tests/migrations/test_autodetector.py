@@ -1737,6 +1737,20 @@ class AutodetectorTests(TestCase):
     def test_rename_mti_base(self):  # XXX: 26488
         self.fail('Not implemented yet.')
 
+    @unittest.expectedFailure
+    def test_remove_mti_base(self):  # XXX: 23521
+        changes = self.get_changes(
+            [],
+            [self.author_empty, self.aardvark_based_on_author],
+        )
+        print(changes)
+        changes = self.get_changes(
+            [self.author_empty, self.aardvark_based_on_author],
+            [self.author_empty, self.aardvark_testapp],
+        )
+        print(changes['testapp'][0].operations)
+        self.fail('Not implemented yet.')
+
     def test_unmanaged_create(self):
         """The autodetector correctly deals with managed models."""
         # First, we test adding an unmanaged model
