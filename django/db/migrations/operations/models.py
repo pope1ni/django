@@ -853,7 +853,7 @@ class AddConstraint(IndexOperation):
             schema_editor.remove_constraint(model, self.constraint)
 
     def deconstruct(self):
-        return self.__class__.__name__, [], {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'constraint': self.constraint,
         }
@@ -894,7 +894,7 @@ class RemoveConstraint(IndexOperation):
             schema_editor.add_constraint(model, constraint)
 
     def deconstruct(self):
-        return self.__class__.__name__, [], {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'name': self.name,
         }
