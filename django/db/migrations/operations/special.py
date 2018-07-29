@@ -23,11 +23,7 @@ class SeparateDatabaseAndState(Operation):
             kwargs['database_operations'] = self.database_operations
         if self.state_operations:
             kwargs['state_operations'] = self.state_operations
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     def state_forwards(self, app_label, state):
         for state_operation in self.state_operations:
@@ -86,11 +82,7 @@ class RunSQL(Operation):
             kwargs['state_operations'] = self.state_operations
         if self.hints:
             kwargs['hints'] = self.hints
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     @property
     def reversible(self):
@@ -163,11 +155,7 @@ class RunPython(Operation):
             kwargs['atomic'] = self.atomic
         if self.hints:
             kwargs['hints'] = self.hints
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     @property
     def reversible(self):

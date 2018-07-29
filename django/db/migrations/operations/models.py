@@ -70,11 +70,7 @@ class CreateModel(ModelOperation):
             kwargs['bases'] = self.bases
         if self.managers and self.managers != [('objects', models.Manager())]:
             kwargs['managers'] = self.managers
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     def state_forwards(self, app_label, state):
         state.add_model(ModelState(
@@ -247,14 +243,9 @@ class DeleteModel(ModelOperation):
     """Drop a model's table."""
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         state.remove_model(app_label, self.name_lower)
@@ -299,15 +290,10 @@ class RenameModel(ModelOperation):
         return self.new_name.lower()
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'old_name': self.old_name,
             'new_name': self.new_name,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         # Add a new model.
@@ -441,15 +427,10 @@ class AlterModelTable(ModelOptionOperation):
         super().__init__(name)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
             'table': self.table,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         state.models[app_label, self.name_lower].options["db_table"] = self.table
@@ -501,15 +482,10 @@ class AlterTogetherOptionOperation(ModelOptionOperation):
         return getattr(self, self.option_name)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
             self.option_name: self.option_value,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.name_lower]
@@ -579,15 +555,10 @@ class AlterOrderWithRespectTo(ModelOptionOperation):
         super().__init__(name)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
             'order_with_respect_to': self.order_with_respect_to,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.name_lower]
@@ -659,15 +630,10 @@ class AlterModelOptions(ModelOptionOperation):
         super().__init__(name)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
             'options': self.options,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.name_lower]
@@ -701,15 +667,10 @@ class AlterModelManagers(ModelOptionOperation):
         super().__init__(name)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'name': self.name,
             'managers': self.managers,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.name_lower]
@@ -766,15 +727,10 @@ class AddIndex(IndexOperation):
             schema_editor.remove_index(model, self.index)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'index': self.index,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs,
-        )
 
     def describe(self):
         return 'Create index %s on field(s) %s of model %s' % (
@@ -816,15 +772,10 @@ class RemoveIndex(IndexOperation):
             schema_editor.add_index(model, index)
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'name': self.name,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs,
-        )
 
     def describe(self):
         return 'Remove index %s from %s' % (self.name, self.model_name)

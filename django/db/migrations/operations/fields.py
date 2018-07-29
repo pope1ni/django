@@ -76,11 +76,7 @@ class AddField(FieldOperation):
         }
         if self.preserve_default is not True:
             kwargs['preserve_default'] = self.preserve_default
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     def state_forwards(self, app_label, state):
         # If preserve default is off, don't use the default for future state
@@ -147,15 +143,10 @@ class RemoveField(FieldOperation):
     """Remove a field from a model."""
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'name': self.name,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.model_name_lower]
@@ -207,11 +198,7 @@ class AlterField(FieldOperation):
         }
         if self.preserve_default is not True:
             kwargs['preserve_default'] = self.preserve_default
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
+        return self.__class__.__qualname__, [], kwargs
 
     def state_forwards(self, app_label, state):
         if not self.preserve_default:
@@ -287,16 +274,11 @@ class RenameField(FieldOperation):
         return self.new_name.lower()
 
     def deconstruct(self):
-        kwargs = {
+        return self.__class__.__qualname__, [], {
             'model_name': self.model_name,
             'old_name': self.old_name,
             'new_name': self.new_name,
         }
-        return (
-            self.__class__.__qualname__,
-            [],
-            kwargs
-        )
 
     def state_forwards(self, app_label, state):
         model_state = state.models[app_label, self.model_name_lower]
