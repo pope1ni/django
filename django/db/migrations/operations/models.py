@@ -701,10 +701,14 @@ class AlterModelManagers(ModelOptionOperation):
         super().__init__(name)
 
     def deconstruct(self):
+        kwargs = {
+            'name': self.name,
+            'managers': self.managers,
+        }
         return (
             self.__class__.__qualname__,
-            [self.name, self.managers],
-            {}
+            [],
+            kwargs
         )
 
     def state_forwards(self, app_label, state):
