@@ -50,13 +50,13 @@ class Command(BaseCommand):
                 if interactive:
                     ct_info = []
                     for ct in to_remove:
-                        ct_info.append('    - Content type for %s.%s' % (ct.app_label, ct.model))
+                        ct_info.append('    • Content type for %s.%s' % (ct.app_label, ct.model))
                         collector = NoFastDeleteCollector(using=using)
                         collector.collect([ct])
 
                         for obj_type, objs in collector.data.items():
                             if objs != {ct}:
-                                ct_info.append('    - %s %s object(s)' % (
+                                ct_info.append('    • %s %s object(s)' % (
                                     len(objs),
                                     obj_type._meta.label,
                                 ))

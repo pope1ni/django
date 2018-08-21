@@ -120,9 +120,9 @@ class Command(BaseCommand):
                 raise CommandError(str(err))
             if run_syncdb:
                 if app_label in executor.loader.migrated_apps:
-                    raise CommandError("Can't use run_syncdb with app '%s' as it has migrations." % app_label)
+                    raise CommandError("Can't use run_syncdb with app “%s” as it has migrations." % app_label)
             elif app_label not in executor.loader.migrated_apps:
-                raise CommandError("App '%s' does not have migrations." % app_label)
+                raise CommandError("App “%s” does not have migrations." % app_label)
 
         if options['app_label'] and options['migration_name']:
             migration_name = options['migration_name']
@@ -133,12 +133,12 @@ class Command(BaseCommand):
                     migration = executor.loader.get_migration_by_prefix(app_label, migration_name)
                 except AmbiguityError:
                     raise CommandError(
-                        "More than one migration matches '%s' in app '%s'. "
+                        "More than one migration matches “%s” in app “%s”. "
                         "Please be more specific." %
                         (migration_name, app_label)
                     )
                 except KeyError:
-                    raise CommandError("Cannot find a migration matching '%s' from app '%s'." % (
+                    raise CommandError("Cannot find a migration matching “%s” from app “%s”." % (
                         migration_name, app_label))
                 targets = [(app_label, migration.name)]
             target_app_labels_only = False
@@ -232,8 +232,8 @@ class Command(BaseCommand):
                         "applied." % ", ".join(repr(app) for app in sorted(changes))
                     ))
                     self.stdout.write(self.style.NOTICE(
-                        "  Run 'manage.py makemigrations' to make new "
-                        "migrations, and then re-run 'manage.py migrate' to "
+                        "  Run “manage.py makemigrations” to make new "
+                        "migrations, and then re-run “manage.py migrate” to "
                         "apply them."
                     ))
             fake = False
@@ -275,7 +275,7 @@ class Command(BaseCommand):
             if action == "apply_start":
                 if compute_time:
                     self.start = time.monotonic()
-                self.stdout.write("  Applying %s..." % migration, ending="")
+                self.stdout.write("  Applying %s…" % migration, ending="")
                 self.stdout.flush()
             elif action == "apply_success":
                 elapsed = " (%.3fs)" % (time.monotonic() - self.start) if compute_time else ""
@@ -286,7 +286,7 @@ class Command(BaseCommand):
             elif action == "unapply_start":
                 if compute_time:
                     self.start = time.monotonic()
-                self.stdout.write("  Unapplying %s..." % migration, ending="")
+                self.stdout.write("  Unapplying %s…" % migration, ending="")
                 self.stdout.flush()
             elif action == "unapply_success":
                 elapsed = " (%.3fs)" % (time.monotonic() - self.start) if compute_time else ""
@@ -297,7 +297,7 @@ class Command(BaseCommand):
             elif action == "render_start":
                 if compute_time:
                     self.start = time.monotonic()
-                self.stdout.write("  Rendering model states...", ending="")
+                self.stdout.write("  Rendering model states…", ending="")
                 self.stdout.flush()
             elif action == "render_success":
                 elapsed = " (%.3fs)" % (time.monotonic() - self.start) if compute_time else ""
@@ -333,7 +333,7 @@ class Command(BaseCommand):
 
         # Create the tables for each model
         if self.verbosity >= 1:
-            self.stdout.write('  Creating tables...')
+            self.stdout.write("  Creating tables…")
         with connection.schema_editor() as editor:
             for app_name, model_list in manifest.items():
                 for model in model_list:
@@ -350,10 +350,9 @@ class Command(BaseCommand):
 
             # Deferred SQL is executed when exiting the editor's context.
             if self.verbosity >= 1:
-                self.stdout.write('    Running deferred SQL...')
+                self.stdout.write("    Running deferred SQL…")
 
-    @staticmethod
-    def describe_operation(operation, backwards):
+    def describe_operation(self, operation, backwards):
         """Return a string that describes a migration operation for --plan."""
         prefix = ''
         is_error = False
@@ -369,9 +368,9 @@ class Command(BaseCommand):
         if action is not None:
             action = str(action).replace('\n', '')
         elif backwards:
-            action = 'IRREVERSIBLE'
+            action = self.style.ERROR('IRREVERSIBLE')
             is_error = True
         if action:
-            action = ' -> ' + action
+            action = ' → ' + action
         truncated = Truncator(action)
         return prefix + operation.describe() + truncated.chars(40), is_error

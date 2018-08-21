@@ -199,7 +199,7 @@ class ManagementUtility:
         else:
             usage = [
                 "",
-                "Type '%s help <subcommand>' for help on a specific subcommand." % self.prog_name,
+                "Type “%s help <subcommand>” for help on a specific subcommand." % self.prog_name,
                 "",
                 "Available subcommands:",
             ]
@@ -248,7 +248,7 @@ class ManagementUtility:
             sys.stderr.write('Unknown command: %r' % subcommand)
             if possible_matches:
                 sys.stderr.write('. Did you mean %s?' % possible_matches[0])
-            sys.stderr.write("\nType '%s help' for usage.\n" % self.prog_name)
+            sys.stderr.write("\nType “%s help” for usage.\n" % self.prog_name)
             sys.exit(1)
         if isinstance(app_name, BaseCommand):
             # If the command is already loaded, use it directly.

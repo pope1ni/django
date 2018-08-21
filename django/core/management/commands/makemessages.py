@@ -29,7 +29,7 @@ def check_programs(*programs):
     for program in programs:
         if find_command(program) is None:
             raise CommandError(
-                "Can't find %s. Make sure you have GNU gettext tools 0.15 or "
+                "Can’t find %s. Make sure you have GNU gettext tools 0.15 or "
                 "newer installed." % program
             )
 
@@ -322,7 +322,7 @@ class Command(BaseCommand):
 
         if self.domain not in ('django', 'djangojs'):
             raise CommandError("currently makemessages only supports domains "
-                               "'django' and 'djangojs'")
+                               "“django” and “djangojs”")
         if self.domain == 'djangojs':
             exts = extensions or ['js']
         else:
@@ -331,7 +331,7 @@ class Command(BaseCommand):
 
         if (not locale and not exclude and not process_all) or self.domain is None:
             raise CommandError(
-                "Type '%s help %s' for usage information."
+                "Type “%s help %s” for usage information."
                 % (os.path.basename(sys.argv[0]), sys.argv[1])
             )
 

@@ -151,6 +151,28 @@ class OutputWrapper(TextIOBase):
         ending = self.ending if ending is None else ending
         if ending and not msg.endswith(ending):
             msg += ending
+
+        replacements = {
+            '✔': '[x]',
+            '▪': '[ ]',
+            '•': '-',
+            '…': '...',
+            '→': '->',
+            '–': '-',
+            '—': '--',
+            '“': '"',
+            '”': '"',
+            '‘': "'",
+            '’': "'",
+            # FIXME: Do we want to handle commonly translated characters?
+            '«': '"',
+            '»': '"',
+        }
+        try:
+            ''.join(replacements).encode(self._out.encoding or 'utf-8')
+        except UnicodeEncodeError:
+            msg = msg.translate(str.maketrans(replacements))
+
         style_func = style_func or self.style_func
         self._out.write(style_func(msg))
 

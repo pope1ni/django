@@ -42,9 +42,9 @@ class RemoveStaleContentTypesTests(TestCase):
                 call_command('remove_stale_contenttypes', verbosity=2, stdout=stdout)
         self.assertEqual(Post.objects.count(), 0)
         output = stdout.getvalue()
-        self.assertIn('- Content type for contenttypes_tests.Fake', output)
-        self.assertIn('- 1 contenttypes_tests.Post object(s)', output)
-        self.assertIn('- 1 contenttypes_tests.ModelWithNullFKToSite', output)
+        self.assertIn('• Content type for contenttypes_tests.Fake', output)
+        self.assertIn('• 1 contenttypes_tests.Post object(s)', output)
+        self.assertIn('• 1 contenttypes_tests.ModelWithNullFKToSite', output)
         self.assertIn('Deleting stale content type', output)
         self.assertEqual(ContentType.objects.count(), self.before_count)
 

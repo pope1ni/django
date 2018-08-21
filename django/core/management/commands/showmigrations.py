@@ -90,13 +90,14 @@ class Command(BaseCommand):
                             title += " (%s squashed migrations)" % len(graph.nodes[plan_node].replaces)
                         applied_migration = loader.applied_migrations.get(plan_node)
                         # Mark it as applied/unapplied
+                        extra = ''
                         if applied_migration:
-                            output = ' [X] %s' % title
+                            marker = self.style.SUCCESS('✔')
                             if self.verbosity >= 2 and hasattr(applied_migration, 'applied'):
-                                output += ' (applied at %s)' % applied_migration.applied.strftime('%Y-%m-%d %H:%M:%S')
-                            self.stdout.write(output)
+                                extra = f' (applied at {applied_migration.applied:%Y-%m-%d %H:%M:%S})'
                         else:
-                            self.stdout.write(" [ ] %s" % title)
+                            marker = self.style.WARNING('▪')
+                        self.stdout.write(f' {marker} {title}{extra}')
                         shown.add(plan_node)
             # If we didn't print anything, then a small message
             if not shown:
@@ -132,7 +133,7 @@ class Command(BaseCommand):
             for parent in sorted(node.parents):
                 out.append("%s.%s" % parent.key)
             if out:
-                return " ... (%s)" % ", ".join(out)
+                return " … (%s)" % ", ".join(out)
             return ""
 
         for node in plan:
@@ -140,8 +141,9 @@ class Command(BaseCommand):
             if self.verbosity >= 2:
                 deps = print_deps(node)
             if node.key in loader.applied_migrations:
-                self.stdout.write("[X]  %s.%s%s" % (node.key[0], node.key[1], deps))
+                marker = self.style.SUCCESS('✔')
             else:
-                self.stdout.write("[ ]  %s.%s%s" % (node.key[0], node.key[1], deps))
+                marker = self.style.WARNING('▪')
+            self.stdout.write(' %s %s.%s%s' % (marker, node.key[0], node.key[1], deps))
         if not plan:
             self.stdout.write('(no migrations)', self.style.ERROR)

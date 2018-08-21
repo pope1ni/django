@@ -33,7 +33,7 @@ class Command(BaseCommand):
             for line in self.handle_inspection(options):
                 self.stdout.write(line)
         except NotImplementedError:
-            raise CommandError("Database inspection isn't supported for the currently selected database backend.")
+            raise CommandError("Database inspection isn’t supported for the currently selected database backend.")
 
     def handle_inspection(self, options):
         connection = connections[options['database']]
@@ -45,15 +45,15 @@ class Command(BaseCommand):
 
         with connection.cursor() as cursor:
             yield "# This is an auto-generated Django model module."
-            yield "# You'll have to do the following manually to clean this up:"
-            yield "#   * Rearrange models' order"
-            yield "#   * Make sure each model has one field with primary_key=True"
-            yield "#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior"
+            yield "# You’ll have to do the following manually to clean this up:"
+            yield "#   • Rearrange models’ order"
+            yield "#   • Make sure each model has one field with “primary_key=True”"
+            yield "#   • Make sure each ForeignKey and OneToOneField has “on_delete” set to the desired behavior"
             yield (
-                "#   * Remove `managed = False` lines if you wish to allow "
+                "#   • Remove “managed = False” lines if you wish to allow "
                 "Django to create, modify, and delete the table"
             )
-            yield "# Feel free to rename the models, but don't rename db_table values or field names."
+            yield "# Feel free to rename the models, but don’t rename “db_table” values or field names."
             yield 'from %s import models' % self.db_module
             known_models = []
             table_info = connection.introspection.get_table_list(cursor)
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                     ]
                     table_description = connection.introspection.get_table_description(cursor, table_name)
                 except Exception as e:
-                    yield "# Unable to inspect table '%s'" % table_name
+                    yield "# Unable to inspect table “%s”" % table_name
                     yield "# The error was: %s" % e
                     continue
 
@@ -198,15 +198,15 @@ class Command(BaseCommand):
                 new_name = new_name.replace(LOOKUP_SEP, '_')
             if col_name.lower().find(LOOKUP_SEP) >= 0:
                 # Only add the comment if the double underscore was in the original name
-                field_notes.append("Field renamed because it contained more than one '_' in a row.")
+                field_notes.append("Field renamed because it contained more than one “_” in a row.")
 
         if new_name.startswith('_'):
             new_name = 'field%s' % new_name
-            field_notes.append("Field renamed because it started with '_'.")
+            field_notes.append("Field renamed because it started with “_”.")
 
         if new_name.endswith('_'):
             new_name = '%sfield' % new_name
-            field_notes.append("Field renamed because it ended with '_'.")
+            field_notes.append("Field renamed because it ended with “_”.")
 
         if keyword.iskeyword(new_name):
             new_name += '_field'
@@ -214,7 +214,7 @@ class Command(BaseCommand):
 
         if new_name[0].isdigit():
             new_name = 'number_%s' % new_name
-            field_notes.append("Field renamed because it wasn't a valid Python identifier.")
+            field_notes.append("Field renamed because it wasn’t a valid Python identifier.")
 
         if new_name in used_column_names:
             num = 0
@@ -253,7 +253,7 @@ class Command(BaseCommand):
         if field_type == 'DecimalField':
             if row.precision is None or row.scale is None:
                 field_notes.append(
-                    'max_digits and decimal_places have been guessed, as this '
+                    '“max_digits” and “decimal_places” have been guessed, as this '
                     'database handles decimal fields as float')
                 field_params['max_digits'] = row.precision if row.precision is not None else 10
                 field_params['decimal_places'] = row.scale if row.scale is not None else 5
@@ -280,9 +280,9 @@ class Command(BaseCommand):
                 if len(columns) > 1:
                     unique_together.append(str(tuple(column_to_field_name[c] for c in columns)))
         if is_view:
-            managed_comment = "  # Created from a view. Don't remove."
+            managed_comment = "  # Created from a view. Don’t remove."
         elif is_partition:
-            managed_comment = "  # Created from a partition. Don't remove."
+            managed_comment = "  # Created from a partition. Don’t remove."
         else:
             managed_comment = ''
         meta = ['']

@@ -61,7 +61,7 @@ class Command(BaseCommand):
         loader = MigrationLoader(connections[DEFAULT_DB_ALIAS])
         if app_label not in loader.migrated_apps:
             raise CommandError(
-                "App '%s' does not have migrations (so squashmigrations on "
+                "App “%s” does not have migrations (so squashmigrations on "
                 "it makes no sense)" % app_label
             )
 
@@ -82,8 +82,8 @@ class Command(BaseCommand):
                 migrations_to_squash = migrations_to_squash[start_index:]
             except ValueError:
                 raise CommandError(
-                    "The migration '%s' cannot be found. Maybe it comes after "
-                    "the migration '%s'?\n"
+                    "The migration “%s” cannot be found. Maybe it comes after "
+                    "the migration “%s”?\n"
                     "Have a look at:\n"
                     "  python manage.py showmigrations %s\n"
                     "to debug this issue." % (start_migration, migration, app_label)
@@ -93,7 +93,7 @@ class Command(BaseCommand):
         if self.verbosity > 0 or self.interactive:
             self.stdout.write(self.style.MIGRATE_HEADING("Will squash the following migrations:"))
             for migration in migrations_to_squash:
-                self.stdout.write(" - %s" % migration.name)
+                self.stdout.write(" • %s" % migration.name)
 
             if self.interactive:
                 answer = None
@@ -139,7 +139,7 @@ class Command(BaseCommand):
             new_operations = operations
         else:
             if self.verbosity > 0:
-                self.stdout.write(self.style.MIGRATE_HEADING("Optimizing..."))
+                self.stdout.write(self.style.MIGRATE_HEADING("Optimizing…"))
 
             optimizer = MigrationOptimizer()
             new_operations = optimizer.optimize(operations, migration.app_label)
@@ -149,7 +149,7 @@ class Command(BaseCommand):
                     self.stdout.write("  No optimizations possible.")
                 else:
                     self.stdout.write(
-                        "  Optimized from %s operations to %s operations." %
+                        "  Optimized from %d operations to %d operations." %
                         (len(operations), len(new_operations))
                     )
 
@@ -208,11 +208,11 @@ class Command(BaseCommand):
             return loader.get_migration_by_prefix(app_label, name)
         except AmbiguityError:
             raise CommandError(
-                "More than one migration matches '%s' in app '%s'. Please be "
+                "More than one migration matches “%s” in app “%s”. Please be "
                 "more specific." % (name, app_label)
             )
         except KeyError:
             raise CommandError(
-                "Cannot find a migration matching '%s' from app '%s'." %
+                "Cannot find a migration matching “%s” from app “%s”." %
                 (name, app_label)
             )

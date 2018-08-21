@@ -65,7 +65,7 @@ class Command(BaseCommand):
             self.program_options = self.program_options + ['-f']
 
         if find_command(self.program) is None:
-            raise CommandError("Can't find %s. Make sure you have GNU gettext "
+            raise CommandError("Can’t find %s. Make sure you have GNU gettext "
                                "tools 0.15 or newer installed." % self.program)
 
         basedirs = [os.path.join('conf', 'locale'), 'locale']

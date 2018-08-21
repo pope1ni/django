@@ -173,7 +173,7 @@ class Command(BaseCommand):
                     continue
                 if model._meta.proxy and model._meta.proxy_for_model not in models:
                     warnings.warn(
-                        "%s is a proxy model and won't be serialized." % model._meta.label,
+                        "%s is a proxy model and won’t be serialized." % model._meta.label,
                         category=ProxyModelWarning,
                     )
                 if not model._meta.proxy and router.allow_migrate_model(using, model):

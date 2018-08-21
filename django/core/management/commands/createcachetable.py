@@ -50,7 +50,7 @@ class Command(BaseCommand):
 
         if tablename in connection.introspection.table_names():
             if self.verbosity > 0:
-                self.stdout.write("Cache table '%s' already exists." % tablename)
+                self.stdout.write("Cache table “%s” already exists." % tablename)
             return
 
         fields = (
@@ -98,10 +98,10 @@ class Command(BaseCommand):
                     curs.execute(full_statement)
                 except DatabaseError as e:
                     raise CommandError(
-                        "Cache table '%s' could not be created.\nThe error was: %s." %
+                        "Cache table “%s” could not be created.\nThe error was: %s." %
                         (tablename, e))
                 for statement in index_output:
                     curs.execute(statement)
 
         if self.verbosity > 1:
-            self.stdout.write("Cache table '%s' created." % tablename)
+            self.stdout.write("Cache table “%s” created." % tablename)
