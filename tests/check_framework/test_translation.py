@@ -17,8 +17,6 @@ class TranslationCheckTests(SimpleTestCase):
             'es-419',          # language+region
             'zh-Hans',         # language+script
             'ca-ES-valencia',  # language+region+variant
-            # FIXME: The following should be invalid:
-            'sr@latin',        # language+script
         )
         self.invalid_tags = (
             None,              # invalid type: None.
@@ -31,9 +29,13 @@ class TranslationCheckTests(SimpleTestCase):
             'en-',             # trailing separator.
             'en-US.UTF-8',     # language tag w/ locale encoding.
             'en_US.UTF-8',     # locale format - language w/ region and encoding.
+            'sr@latin',        # locale format - language w/ script.
             'ca_ES@valencia',  # locale format - language w/ region and variant.
-            # FIXME: The following should be invalid:
-            # 'sr@latin',      # locale instead of language tag.
+            '419',             # region w/o primary language.
+            'Hans',            # script w/o primary language.
+            'Hans-zh',         # script after primary language.
+            'zh-HK-Hans',      # script after region.
+            'ca-valencia-ES',  # region after variant.
         )
 
     def test_valid_language_code(self):
