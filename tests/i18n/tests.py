@@ -1759,22 +1759,14 @@ class CountrySpecificLanguageTests(SimpleTestCase):
     rf = RequestFactory()
 
     def test_check_for_language(self):
-        self.assertTrue(check_for_language('en'))
-        self.assertTrue(check_for_language('en-us'))
-        self.assertTrue(check_for_language('en-US'))
-        self.assertFalse(check_for_language('en_US'))
-        self.assertTrue(check_for_language('be'))
-        self.assertTrue(check_for_language('be@latin'))
-        self.assertTrue(check_for_language('sr-RS@latin'))
-        self.assertTrue(check_for_language('sr-RS@12345'))
-        self.assertFalse(check_for_language('en-ü'))
-        self.assertFalse(check_for_language('en\x00'))
-        self.assertFalse(check_for_language(None))
-        self.assertFalse(check_for_language('be@ '))
-        # Specifying encoding is not supported (Django enforces UTF-8)
-        self.assertFalse(check_for_language('tr-TR.UTF-8'))
-        self.assertFalse(check_for_language('tr-TR.UTF8'))
-        self.assertFalse(check_for_language('de-DE.utf-8'))
+        valid = ('en', 'en-us', 'en-US', 'be', 'be@latin', 'sr-RS@latin', 'sr-RS@12345')
+        for language in valid:
+            with self.subTest(language):
+                self.assertTrue(check_for_language(language))
+        invalid = (None, 'en_US', 'en-ü', 'en\x00', 'be@ ', 'tr-TR.UTF-8', 'tr-TR.UTF8', 'de-DE.utf-8')
+        for language in invalid:
+            with self.subTest(language):
+                self.assertFalse(check_for_language(language))
 
     def test_check_for_language_null(self):
         self.assertIs(trans_null.check_for_language('en'), True)
