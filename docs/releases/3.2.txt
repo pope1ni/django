@@ -322,9 +322,15 @@ Pagination
   large number of pages, this can be helpful for generating a reasonable number
   of page links in a template.
 
-* Added :class:`~django.db.models.functions.Log2`,
+* Added :class:`~django.db.models.functions.ACosh`,
+  :class:`~django.db.models.functions.ASinh`,
+  :class:`~django.db.models.functions.ATanh`,
+  :class:`~django.db.models.functions.Cosh`,
+  :class:`~django.db.models.functions.Log2`,
   :class:`~django.db.models.functions.Log10`,
-  :class:`~django.db.models.functions.Random`, and
+  :class:`~django.db.models.functions.Random`,
+  :class:`~django.db.models.functions.Sinh`,
+  :class:`~django.db.models.functions.Tanh`, and
   :class:`~django.db.models.functions.Truncate` database functions.
 
 Requests and Responses
