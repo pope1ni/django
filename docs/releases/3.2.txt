@@ -131,6 +131,8 @@ Minor features
 * The :class:`~django.contrib.postgres.operations.CreateExtension` operation
   now checks that the extension already exists in the database and skips the
   migration if so.
+* Added the :class:`~django.contrib.postgres.operations.FuzzyStrMatchExtension`
+  migration operation.
 
 :mod:`django.contrib.redirects`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -321,6 +323,7 @@ Pagination
   allows generating a page range with some of the values elided. If there are a
   large number of pages, this can be helpful for generating a reasonable number
   of page links in a template.
+* Added the :class:`~django.db.models.functions.Soundex` database function.
 
 * Added :class:`~django.db.models.functions.ACosh`,
   :class:`~django.db.models.functions.ASinh`,

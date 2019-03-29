@@ -294,6 +294,15 @@ class SHA512(MySQLSHA2Mixin, OracleHashMixin, PostgreSQLSHAMixin, Transform):
     lookup_name = 'sha512'
 
 
+class Soundex(Transform):
+    function = 'SOUNDEX'
+    lookup_name = 'soundex'
+
+    def as_mysql(self, compiler, connection, **extra_context):
+        template = 'LEFT(%(function)s(CONVERT(%(expressions)s USING ascii)), 4)'
+        return super().as_sql(compiler, connection, template=template, **extra_context)
+
+
 class StrIndex(Func):
     """
     Return a positive integer corresponding to the 1-indexed position of the

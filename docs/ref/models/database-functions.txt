@@ -1777,6 +1777,33 @@ Usage example::
 
     Oracle doesn't support the ``SHA224`` function.
 
+``Soundex``
+-----------
+
+.. class:: Soundex(expression, **extra)
+
+.. versionadded:: 3.2
+
+Accepts a single text field or expression and returns the value encoded by the
+Soundex phonetic algorithm.
+
+It can also be registered as a transform as described in :class:`Length`.
+
+Usage example::
+
+    >>> from django.db.models.functions import Soundex
+    >>> Author.objects.create(name='Rupert')
+    >>> author = Author.objects.annotate(name_soundex=Soundex('name')).get()
+    >>> print(author.name_soundex)
+    R163
+
+.. admonition:: PostgreSQL
+
+    The `fuzzystrmatch extension <https://www.postgresql.org/docs/current/
+    fuzzystrmatch.html>`_ must be installed. You can use the
+    :class:`~django.contrib.postgres.operations.FuzzyStrMatchExtension`
+    migration operation to install it.
+
 ``StrIndex``
 ------------
 

@@ -261,6 +261,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         create_deterministic_function('SIGN', 1, none_guard(lambda x: (x > 0) - (x < 0)))
         create_deterministic_function('SIN', 1, none_guard(math.sin))
         create_deterministic_function('SINH', 1, none_guard(math.sinh))
+        create_deterministic_function('SOUNDEX', 1, _sqlite_soundex)
         create_deterministic_function('SQRT', 1, none_guard(math.sqrt))
         create_deterministic_function('TAN', 1, none_guard(math.tan))
         create_deterministic_function('TANH', 1, none_guard(math.tanh))
@@ -610,3 +611,16 @@ def _sqlite_lpad(text, length, fill_text):
 @none_guard
 def _sqlite_rpad(text, length, fill_text):
     return (text + fill_text * length)[:length]
+
+
+@none_guard
+def _sqlite_soundex(x):
+    t = str.maketrans('BCDFGJKLMNPQRSTVXZ', '123122245512623122', 'AEHIOUWY')
+    o, p = '', None
+    for c in (i for i in x.upper() if 'A' <= i <= 'Z'):
+        s = c.translate(t)
+        if p != s:
+            o, p = (o + s if o else c), s
+        if len(o) >= 4:
+            break
+    return o and o.ljust(4, '0')

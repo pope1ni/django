@@ -93,6 +93,15 @@ them. In that case, connect to your Django database and run the query
 
     Installs the ``pgcrypto`` extension.
 
+``FuzzyStrMatchExtension``
+==========================
+
+.. class:: FuzzyStrMatchExtension()
+
+    .. versionadded:: 3.2
+
+    Installs the ``fuzzystrmatch`` extension.
+
 ``HStoreExtension``
 ===================
 

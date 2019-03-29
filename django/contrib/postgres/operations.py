@@ -90,6 +90,12 @@ class CryptoExtension(CreateExtension):
         self.name = 'pgcrypto'
 
 
+class FuzzyStrMatchExtension(CreateExtension):
+
+    def __init__(self):
+        self.name = 'fuzzystrmatch'
+
+
 class HStoreExtension(CreateExtension):
 
     def __init__(self):
