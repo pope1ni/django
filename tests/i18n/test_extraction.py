@@ -208,12 +208,12 @@ class BasicExtractorTests(ExtractorTests):
     def test_extraction_error(self):
         msg = (
             'Translation blocks must not include other block tags: blocktranslate '
-            '(file %s, line 3)' % os.path.join('templates', 'template_with_error.tpl')
+            '(file %s, line 3)' % os.path.join('templates', 'template_with_error.html')
         )
         with self.assertRaisesMessage(SyntaxError, msg):
             management.call_command('makemessages', locale=[LOCALE], extensions=['tpl'], verbosity=0)
         # The temporary file was cleaned up
-        self.assertFalse(os.path.exists('./templates/template_with_error.tpl.py'))
+        self.assertFalse(os.path.exists('./templates/template_with_error.html.py'))
 
     def test_unicode_decode_error(self):
         shutil.copyfile('./not_utf8.sample', './not_utf8.txt')
