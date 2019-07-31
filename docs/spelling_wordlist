@@ -346,7 +346,9 @@ localizers
 localtime
 login
 logout
+lookahead
 lookaround
+lookbehind
 lookup
 lookups
 loopback

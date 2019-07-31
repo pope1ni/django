@@ -238,6 +238,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         create_deterministic_function('PI', 0, lambda: math.pi)
         create_deterministic_function('POWER', 2, none_guard(operator.pow))
         create_deterministic_function('RADIANS', 1, none_guard(math.radians))
+        create_deterministic_function('REGEXP_INSTR', 3, _sqlite_regexp_instr)
+        create_deterministic_function('REGEXP_REPLACE', 4, _sqlite_regexp_replace)
+        create_deterministic_function('REGEXP_SUBSTR', 3, _sqlite_regexp_substr)
         create_deterministic_function('REPEAT', 2, none_guard(operator.mul))
         create_deterministic_function('REVERSE', 1, none_guard(lambda x: x[::-1]))
         create_deterministic_function('RPAD', 3, _sqlite_rpad)
@@ -610,6 +613,33 @@ def _sqlite_timestamp_diff(lhs, rhs):
 @none_guard
 def _sqlite_regexp(re_pattern, re_string):
     return bool(re.search(re_pattern, str(re_string)))
+
+
+def _sqlite_regexp_convert_flags(flags):
+    count = 0 if 'g' in flags else 1
+    flags = (getattr(re, x.upper()) for x in flags if x in 'imsx')
+    flags = functools.reduce(operator.or_, flags, 0)
+    return count, flags
+
+
+@none_guard
+def _sqlite_regexp_instr(text, pattern, flags=''):
+    _, flags = _sqlite_regexp_convert_flags(flags)
+    match = re.search(pattern, text, flags)
+    return match and match.start(0) + 1 or 0
+
+
+@none_guard
+def _sqlite_regexp_replace(text, pattern, replacement, flags=''):
+    count, flags = _sqlite_regexp_convert_flags(flags)
+    return re.sub(pattern, replacement, text, count, flags)
+
+
+@none_guard
+def _sqlite_regexp_substr(text, pattern, flags=''):
+    _, flags = _sqlite_regexp_convert_flags(flags)
+    match = re.search(pattern, text, flags)
+    return match and match.group(0)
 
 
 @none_guard

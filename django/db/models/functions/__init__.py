@@ -14,8 +14,9 @@ from .math import (
 )
 from .text import (
     MD5, SHA1, SHA224, SHA256, SHA384, SHA512, Chr, Concat, ConcatPair, Left,
-    Length, Lower, LPad, LTrim, Ord, Repeat, Replace, Reverse, Right, RPad,
-    RTrim, StrIndex, Substr, Trim, Upper,
+    Length, Lower, LPad, LTrim, Ord, RegexpReplace, RegexpStrIndex,
+    RegexpSubstr, Repeat, Replace, Reverse, Right, RPad, RTrim, StrIndex,
+    Substr, Trim, Upper,
 )
 from .window import (
     CumeDist, DenseRank, FirstValue, Lag, LastValue, Lead, NthValue, Ntile,
@@ -37,9 +38,9 @@ __all__ = [
     'Round', 'Sign', 'Sin', 'Sqrt', 'Tan',
     # text
     'MD5', 'SHA1', 'SHA224', 'SHA256', 'SHA384', 'SHA512', 'Chr', 'Concat',
-    'ConcatPair', 'Left', 'Length', 'Lower', 'LPad', 'LTrim', 'Ord', 'Repeat',
-    'Replace', 'Reverse', 'Right', 'RPad', 'RTrim', 'StrIndex', 'Substr',
-    'Trim', 'Upper',
+    'ConcatPair', 'Left', 'Length', 'Lower', 'LPad', 'LTrim', 'Ord',
+    'RegexpReplace', 'RegexpStrIndex', 'RegexpSubstr', 'Repeat', 'Replace',
+    'Reverse', 'Right', 'RPad', 'RTrim', 'StrIndex', 'Substr', 'Trim', 'Upper',
     # window
     'CumeDist', 'DenseRank', 'FirstValue', 'Lag', 'LastValue', 'Lead',
     'NthValue', 'Ntile', 'PercentRank', 'Rank', 'RowNumber',

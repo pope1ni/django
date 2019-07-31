@@ -288,6 +288,10 @@ Models
 * :class:`~django.db.models.Lookup` expressions may now be used in ``QuerySet``
   annotations, aggregations, and directly in filters.
 
+* Added the :class:`~django.db.models.functions.RegexpReplace`,
+  :class:`~django.db.models.functions.RegexpStrIndex`, and
+  :class:`~django.db.models.functions.RegexpSubstr` database functions.
+
 Requests and Responses
 ~~~~~~~~~~~~~~~~~~~~~~
 

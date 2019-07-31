@@ -79,6 +79,11 @@ class DatabaseFeatures(BaseDatabaseFeatures):
             "scalar value but it's not implemented (#25287).": {
                 'expressions.tests.FTimeDeltaTests.test_durationfield_multiply_divide',
             },
+            "MySQL & MariaDB don't support the extended flag.": {
+                'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_extended_flag',
+                'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_extended_flag',
+                'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_extended_flag',
+            },
         }
         if 'ONLY_FULL_GROUP_BY' in self.connection.sql_mode:
             skips.update({
@@ -86,6 +91,69 @@ class DatabaseFeatures(BaseDatabaseFeatures):
                 'ONLY_FULL_GROUP_BY mode is enabled on MySQL, see #31331.': {
                     'aggregation.tests.AggregateTestCase.test_aggregation_subquery_annotation_multivalued',
                     'annotations.tests.NonAggregateAnnotationTestCase.test_annotation_aggregate_with_m2o',
+                },
+            })
+        if self.connection.mysql_is_mariadb:
+            skips.update({
+                'MariaDB can only replace all occurrences.': {
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_first_occurrence',
+                },
+            })
+        if not self.connection.mysql_is_mariadb and self.connection.mysql_version < (8, 0, 4):
+            skips.update({
+                'MySQL only supports REGEXP_REPLACE() in 8.0.4+.': {
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_null',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_simple',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_case_sensitive',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_lookahead',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_lookbehind',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_substitution',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_expression',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_update',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_first_occurrence',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_global_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_dotall_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_multiline_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_extended_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_case_sensitive_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_case_insensitive_flag',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_case_sensitive_flag_preferred',
+                    'db_functions.text.test_regexpreplace.RegexpReplaceFlagTests.test_case_insensitive_flag_preferred',
+                },
+                'MySQL only supports REGEXP_INSTR() in 8.0.4+.': {
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_null',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_simple',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_case_sensitive',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_lookahead',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_lookbehind',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_substitution',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_expression',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_update',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_dotall_flag',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_multiline_flag',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_extended_flag',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_case_sensitive_flag',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_case_insensitive_flag',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests.test_case_sensitive_flag_preferred',
+                    'db_functions.text.test_regexpstrindex.RegexpStrIndexFlagTests'
+                    '.test_case_insensitive_flag_preferred',
+                },
+                'MySQL only supports REGEXP_SUBSTR() in 8.0.4+.': {
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_null',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_simple',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_case_sensitive',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_lookahead',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_lookbehind',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_substitution',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_expression',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_update',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_dotall_flag',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_multiline_flag',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_extended_flag',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_case_sensitive_flag',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_case_insensitive_flag',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_case_sensitive_flag_preferred',
+                    'db_functions.text.test_regexpsubstr.RegexpSubstrFlagTests.test_case_insensitive_flag_preferred',
                 },
             })
         if (

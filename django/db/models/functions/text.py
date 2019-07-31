@@ -1,3 +1,5 @@
+import re
+
 from django.db import NotSupportedError
 from django.db.models.expressions import Func, Value
 from django.db.models.fields import CharField, IntegerField
@@ -186,6 +188,133 @@ class Ord(Transform):
 
     def as_sqlite(self, compiler, connection, **extra_context):
         return super().as_sql(compiler, connection, function='UNICODE', **extra_context)
+
+
+class RegexpFlagMixin:
+    def _resolve_flags(self, flags, mapping, default=''):
+        value = default + flags.value
+
+        # Remove duplicate flags preserving the last occurrence of each to
+        # ensures that the last flag is preferred if any are contradictory.
+        value = ''.join(reversed(dict.fromkeys(reversed(value))))
+
+        # Resolve case-sensitivity flags preferring the last flag specified.
+        if {'c', 'i'}.issubset(value):
+            remove = 'i' if value.index('c') > value.index('i') else 'c'
+            value = value.replace(remove, '')
+
+        # Map flags from normalized values to backend-specific values:
+        flags.value = value.translate(str.maketrans(mapping))
+
+    def _resolve_extra(self, extra, flags):
+        extra.append(Value(1))  # position
+        extra.append(Value(0 if 'g' in flags.value else 1))  # occurrence
+        if isinstance(self, RegexpStrIndex):
+            extra.append(Value(0))  # return_opt
+        flags.value = flags.value.replace('g', '')
+        extra.append(flags)
+
+    def _inline_flags(self, pattern, flags, mariadb=False):
+        if flags.value and pattern.value:
+            # Force flags inline in the pattern instead of as an argument.
+            # Also convert case-sensitive flag to separate (?-i) for MariaDB.
+            if mariadb and 'c' in flags.value:
+                pattern.value = '(?-i)' + pattern.value
+                flags.value = flags.value.replace('c', '')
+            flags.value = flags.value.replace('g', '')
+            pattern.value = ('(?%s)' % flags.value) + pattern.value
+
+    def as_mysql(self, compiler, connection, **extra_context):
+        clone = self.copy()
+        expression, pattern, *extra, flags = clone.get_source_expressions()
+        # Force case-sensitive matching by default for consistency.
+        mapping = {} if connection.mysql_is_mariadb else {'s': 'n'}
+        self._resolve_flags(flags, mapping, default='c')
+        if not connection.mysql_is_mariadb:
+            self._resolve_extra(extra, flags)
+        else:
+            self._inline_flags(pattern, flags, mariadb=True)
+        clone.set_source_expressions([expression, pattern, *extra])
+        return clone.as_sql(compiler, connection, **extra_context)
+
+    def as_oracle(self, compiler, connection, **extra_context):
+        clone = self.copy()
+        expression, pattern, *extra, flags = clone.get_source_expressions()
+        self._resolve_flags(flags, {'s': 'n'})
+        self._resolve_extra(extra, flags)
+        clone.set_source_expressions([expression, pattern, *extra])
+        return clone.as_sql(compiler, connection, **extra_context)
+
+    def as_postgresql(self, compiler, connection, **extra_context):
+        clone = self.copy()
+        expression, pattern, *extra, flags = clone.get_source_expressions()
+        # Force partial newline-sensitive matching by default for consistency.
+        self._resolve_flags(flags, {'m': 'n'}, default='p')
+        clone.set_source_expressions([expression, pattern, *extra, flags])
+        return clone.as_sql(compiler, connection, **extra_context)
+
+    def as_sqlite(self, compiler, connection, **extra_context):
+        clone = self.copy()
+        expression, pattern, *extra, flags = clone.get_source_expressions()
+        self._resolve_flags(flags, {})
+        clone.set_source_expressions([expression, pattern, *extra, flags])
+        return clone.as_sql(compiler, connection, **extra_context)
+
+
+class RegexpReplace(RegexpFlagMixin, Func):
+    function = 'REGEXP_REPLACE'
+    output_field = CharField()
+
+    def __init__(self, expression, pattern, replacement=Value(''), flags=Value(''), **extra):
+        super().__init__(expression, pattern, replacement, flags, **extra)
+
+
+class RegexpStrIndex(RegexpFlagMixin, Func):
+    function = 'REGEXP_INSTR'
+    output_field = IntegerField()
+
+    def __init__(self, expression, pattern, flags=Value(''), **extra):
+        super().__init__(expression, pattern, flags, **extra)
+
+    def as_postgresql(self, compiler, connection, **extra_context):
+        # Note: This emulated version doesn't handle NULL pattern correctly.
+        expression, pattern, flags = self.source_expressions
+        expr = RegexpSubstr(expression, pattern, flags, no_wrap=True)
+        expr = StrIndex(expression, Coalesce(expr, Value('<<fail>>')))
+        return expr.as_postgresql(compiler, connection, **extra_context)
+
+
+class RegexpSubstr(RegexpFlagMixin, Func):
+    function = 'REGEXP_SUBSTR'
+    output_field = CharField()
+
+    def __init__(self, expression, pattern, flags=Value(''), **extra):
+        super().__init__(expression, pattern, flags, **extra)
+
+    def as_postgresql(self, compiler, connection, **extra_context):
+        clone = self.copy()
+        expression, pattern, *extra, flags = clone.get_source_expressions()
+        # Force partial newline-sensitive matching by default for consistency.
+        self._resolve_flags(flags, {'m': 'n'}, default='p')
+
+        # Wrap pattern in group if required and increment backreferences.
+        if pattern.value and not extra_context.get('no_wrap'):
+            pattern.value = '(%s)' % re.sub(
+                r'\\([0-9])',
+                lambda m: r'\%d' % (int(m.group(1)) + 1),
+                pattern.value,
+            )
+
+        self._inline_flags(pattern, flags)
+        clone.set_source_expressions([expression, pattern, *extra])
+        return clone.as_sql(
+            compiler,
+            connection,
+            template='%(function)s(%(expressions)s)',
+            arg_joiner=' FROM ',
+            function='SUBSTRING',
+            **extra_context,
+        )
 
 
 class Repeat(Func):

@@ -88,6 +88,14 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         'Raises ORA-00600: internal error code.': {
             'model_fields.test_jsonfield.TestQuerying.test_usage_in_subquery',
         },
+        "Oracle doesn't support lookahead/lookbehind assertions.": {
+            'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_lookahead',
+            'db_functions.text.test_regexpreplace.RegexpReplaceTests.test_lookbehind',
+            'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_lookahead',
+            'db_functions.text.test_regexpstrindex.RegexpStrIndexTests.test_lookbehind',
+            'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_lookahead',
+            'db_functions.text.test_regexpsubstr.RegexpSubstrTests.test_lookbehind',
+        },
     }
     django_test_expected_failures = {
         # A bug in Django/cx_Oracle with respect to string handling (#23843).
