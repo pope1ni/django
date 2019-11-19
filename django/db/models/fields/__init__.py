@@ -1955,62 +1955,6 @@ class NullBooleanField(BooleanField):
         return "NullBooleanField"
 
 
-class PositiveIntegerRelDbTypeMixin:
-
-    def rel_db_type(self, connection):
-        """
-        Return the data type that a related field pointing to this field should
-        use. In most cases, a foreign key pointing to a positive integer
-        primary key will have an integer column data type but some databases
-        (e.g. MySQL) have an unsigned integer type. In that case
-        (related_fields_match_type=True), the primary key should return its
-        db_type.
-        """
-        if connection.features.related_fields_match_type:
-            return self.db_type(connection)
-        else:
-            return IntegerField().db_type(connection=connection)
-
-
-class PositiveBigIntegerField(PositiveIntegerRelDbTypeMixin, IntegerField):
-    description = _('Positive big integer')
-
-    def get_internal_type(self):
-        return 'PositiveBigIntegerField'
-
-    def formfield(self, **kwargs):
-        return super().formfield(**{
-            'min_value': 0,
-            **kwargs,
-        })
-
-
-class PositiveIntegerField(PositiveIntegerRelDbTypeMixin, IntegerField):
-    description = _("Positive integer")
-
-    def get_internal_type(self):
-        return "PositiveIntegerField"
-
-    def formfield(self, **kwargs):
-        return super().formfield(**{
-            'min_value': 0,
-            **kwargs,
-        })
-
-
-class PositiveSmallIntegerField(PositiveIntegerRelDbTypeMixin, IntegerField):
-    description = _("Positive small integer")
-
-    def get_internal_type(self):
-        return "PositiveSmallIntegerField"
-
-    def formfield(self, **kwargs):
-        return super().formfield(**{
-            'min_value': 0,
-            **kwargs,
-        })
-
-
 class SlugField(CharField):
     default_validators = [validators.validate_slug]
     description = _("Slug (up to %(max_length)s)")
@@ -2347,6 +2291,47 @@ class UUIDField(Field):
             'form_class': forms.UUIDField,
             **kwargs,
         })
+
+
+class PositiveFieldMixin:
+
+    def rel_db_type(self, connection):
+        """
+        Return the data type that a related field pointing to this field should
+        use. In most cases, a foreign key pointing to a positive integer
+        primary key will have an integer column data type but some databases
+        (e.g. MySQL) have an unsigned integer type. In that case
+        (related_fields_match_type=True), the primary key should return its
+        db_type.
+        """
+        if connection.features.related_fields_match_type:
+            return self.db_type(connection)
+        else:
+            return IntegerField().db_type(connection=connection)
+
+    def formfield(self, **kwargs):
+        return super().formfield(**{'min_value': 0, **kwargs})
+
+
+class PositiveIntegerField(PositiveFieldMixin, IntegerField):
+    description = _('Positive integer')
+
+    def get_internal_type(self):
+        return 'PositiveIntegerField'
+
+
+class PositiveBigIntegerField(PositiveFieldMixin, IntegerField):
+    description = _('Positive big integer')
+
+    def get_internal_type(self):
+        return 'PositiveBigIntegerField'
+
+
+class PositiveSmallIntegerField(PositiveFieldMixin, IntegerField):
+    description = _('Positive small integer')
+
+    def get_internal_type(self):
+        return 'PositiveSmallIntegerField'
 
 
 class AutoFieldMixin:
