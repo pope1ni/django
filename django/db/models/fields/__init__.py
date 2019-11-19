@@ -2304,10 +2304,9 @@ class PositiveFieldMixin:
         (related_fields_match_type=True), the primary key should return its
         db_type.
         """
-        if connection.features.related_fields_match_type:
-            return self.db_type(connection)
-        else:
-            return IntegerField().db_type(connection=connection)
+        if self.rel_db_field and not connection.features.related_fields_match_type:
+            return self.rel_db_field().db_type(connection=connection)
+        return super().rel_db_type(connection)
 
     def formfield(self, **kwargs):
         return super().formfield(**{'min_value': 0, **kwargs})
@@ -2315,20 +2314,23 @@ class PositiveFieldMixin:
 
 class PositiveIntegerField(PositiveFieldMixin, IntegerField):
     description = _('Positive integer')
+    rel_db_field = IntegerField  # XXX: #1165 2667ead8850cb767c798149f781449c5b37d7367
 
     def get_internal_type(self):
         return 'PositiveIntegerField'
 
 
-class PositiveBigIntegerField(PositiveFieldMixin, IntegerField):
+class PositiveBigIntegerField(PositiveFieldMixin, BigIntegerField):
     description = _('Positive big integer')
+    rel_db_field = IntegerField  # XXX: #1165 2667ead8850cb767c798149f781449c5b37d7367
 
     def get_internal_type(self):
         return 'PositiveBigIntegerField'
 
 
-class PositiveSmallIntegerField(PositiveFieldMixin, IntegerField):
+class PositiveSmallIntegerField(PositiveFieldMixin, SmallIntegerField):
     description = _('Positive small integer')
+    rel_db_field = IntegerField  # XXX: #1165 2667ead8850cb767c798149f781449c5b37d7367
 
     def get_internal_type(self):
         return 'PositiveSmallIntegerField'
