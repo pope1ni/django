@@ -24,6 +24,24 @@ def token_view(request):
     return HttpResponse(template.render(context))
 
 
+def token_view_using_meta_tag(request):
+    context = RequestContext(request, processors=[csrf])
+    template = Template('{% csrf_token tag="meta" name="csrf-token" %}')
+    return HttpResponse(template.render(context))
+
+
+def token_view_using_invalid_tag(request):
+    context = RequestContext(request, processors=[csrf])
+    template = Template('{% csrf_token tag="script" name="csrf-token" %}')
+    return HttpResponse(template.render(context))
+
+
+def token_view_using_invalid_token(request):
+    context = RequestContext(request, processors=[csrf])
+    template = Template('{% csrf_token tag="input" name="csrf-token" invalid %}')
+    return HttpResponse(template.render(context))
+
+
 def non_token_view_using_request_processor(request):
     """Use the csrf view processor instead of the token."""
     context = RequestContext(request, processors=[csrf])

@@ -175,7 +175,10 @@ Cache
 CSRF
 ~~~~
 
-* ...
+* The :ttag:`csrf_token` template tag now accepts ``tag`` and ``name`` as
+  keyword arguments where ``tag`` can be ``'input'`` (the default) or
+  ``'meta'``, and ``name`` can be a custom string other than the default
+  ``'csrfmiddlewaretoken'``.
 
 Email
 ~~~~~

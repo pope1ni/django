@@ -50,13 +50,26 @@ class CommentNode(Node):
 
 
 class CsrfTokenNode(Node):
+    def __init__(self, *, tag, name):
+        self.tag = tag
+        self.name = name
+
     def render(self, context):
         csrf_token = context.get('csrf_token')
         if csrf_token:
+            tag = self.tag.resolve(context).lower() if self.tag else 'input'
+            name = self.name.resolve(context) if self.name else 'csrfmiddlewaretoken'
             if csrf_token == 'NOTPROVIDED':
                 return format_html("")
+            elif tag == 'input':
+                return format_html('<{} type="hidden" name="{}" value="{}">', tag, name, csrf_token)
+            elif tag == 'meta':
+                return format_html('<{} name="{}" content="{}">', tag, name, csrf_token)
             else:
-                return format_html('<input type="hidden" name="csrfmiddlewaretoken" value="{}">', csrf_token)
+                raise ValueError(
+                    "Invalid '%s' tag for csrf_token. Only 'meta' and 'input' "
+                    "are supported." % tag
+                )
         else:
             # It's very probable that the token is missing because of
             # misconfiguration, so we raise a warning
@@ -632,7 +645,14 @@ def cycle(parser, token):
 
 @register.tag
 def csrf_token(parser, token):
-    return CsrfTokenNode()
+    bits = token.split_contents()
+    remaining_bits = bits[1:]
+    kwargs = token_kwargs(remaining_bits, parser)
+    if remaining_bits:
+        raise TemplateSyntaxError(
+            "%r received an invalid token: %r" % (bits[0], remaining_bits[0]),
+        )
+    return CsrfTokenNode(tag=kwargs.get('tag'), name=kwargs.get('name'))
 
 
 @register.tag

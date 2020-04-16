@@ -9,12 +9,14 @@ from django.middleware.csrf import (
     REASON_NO_CSRF_COOKIE, CsrfViewMiddleware,
     _compare_masked_tokens as equivalent_tokens, get_token,
 )
+from django.template.exceptions import TemplateSyntaxError
 from django.test import SimpleTestCase, override_settings
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 
 from .views import (
     ensure_csrf_cookie_view, non_token_view_using_request_processor,
-    post_form_view, token_view,
+    post_form_view, token_view, token_view_using_invalid_tag,
+    token_view_using_invalid_token, token_view_using_meta_tag,
 )
 
 
@@ -59,13 +61,14 @@ class CsrfViewMiddlewareTestMixin:
         req.POST['csrfmiddlewaretoken'] = self._csrf_id
         return req
 
-    def _check_token_present(self, response, csrf_id=None):
+    def _check_token_present(self, response, csrf_id=None, *, tag='input', name='csrfmiddlewaretoken'):
         text = str(response.content, response.charset)
-        match = re.search('name="csrfmiddlewaretoken" value="(.*?)"', text)
+        attr = 'content' if tag == 'meta' else 'value'
+        match = re.search('name="%s" %s="(.*?)"' % (re.escape(name), attr), text)
         csrf_token = csrf_id or self._csrf_id
         self.assertTrue(
             match and equivalent_tokens(csrf_token, match[1]),
-            "Could not find csrfmiddlewaretoken to match %s" % csrf_token
+            "Could not find %s to match %s" % (name, csrf_token)
         )
 
     def test_process_response_get_token_not_used(self):
@@ -748,6 +751,30 @@ class CsrfViewMiddlewareUseSessionsTests(CsrfViewMiddlewareTestMixin, SimpleTest
         resp = mw(req)
         csrf_cookie = req.session[CSRF_SESSION_KEY]
         self._check_token_present(resp, csrf_id=csrf_cookie)
+
+    def test_token_node_with_new_csrf_cookie_using_meta_tag(self):
+        req = self._get_GET_no_csrf_cookie_request()
+        mw = CsrfViewMiddleware(token_view_using_meta_tag)
+        mw.process_view(req, token_view_using_meta_tag, (), {})
+        resp = mw(req)
+        csrf_cookie = req.session[CSRF_SESSION_KEY]
+        self._check_token_present(resp, csrf_id=csrf_cookie, tag='meta', name='csrf-token')
+
+    def test_token_node_with_new_csrf_cookie_using_invalid_tag(self):
+        req = self._get_GET_no_csrf_cookie_request()
+        mw = CsrfViewMiddleware(token_view_using_invalid_tag)
+        mw.process_view(req, token_view_using_invalid_tag, (), {})
+        msg = "Invalid 'script' tag for csrf_token. Only 'meta' and 'input' are supported."
+        with self.assertRaisesMessage(ValueError, msg):
+            resp = mw(req)
+
+    def test_token_node_with_new_csrf_cookie_using_invalid_token(self):
+        req = self._get_GET_no_csrf_cookie_request()
+        mw = CsrfViewMiddleware(token_view_using_invalid_token)
+        mw.process_view(req, token_view_using_invalid_token, (), {})
+        msg = "'csrf_token' received an invalid token: 'invalid'"
+        with self.assertRaisesMessage(TemplateSyntaxError, msg):
+            resp = mw(req)
 
     @override_settings(
         ALLOWED_HOSTS=['www.example.com'],

@@ -140,6 +140,20 @@ and read the token from the DOM with JavaScript:
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     </script>
 
+Some frontend frameworks implicitly support reading the token from a meta tag
+with a specific name. The token can be output in this form by passing some
+options:
+
+.. code-block:: html+django
+
+    <head>
+    {% csrf_token tag='meta' name='csrf-token' %}
+    </head>
+
+.. versionchanged:: 3.2
+
+    Added ``tag`` and ``name`` arguments to :ttag:`csrf_token`.
+
 Setting the token on the AJAX request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
