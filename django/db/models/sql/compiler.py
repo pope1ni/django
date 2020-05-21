@@ -505,6 +505,7 @@ class SQLCompiler:
         refcounts_before = self.query.alias_refcount.copy()
         try:
             extra_select, order_by, group_by = self.pre_sql_setup()
+            for_share_part = None
             for_update_part = None
             # Is a LIMIT/OFFSET clause needed?
             with_limit_offset = with_limits and (self.query.high_mark is not None or self.query.low_mark)
@@ -546,7 +547,44 @@ class SQLCompiler:
                 result += [', '.join(out_cols), 'FROM', *from_]
                 params.extend(f_params)
 
-                if self.query.select_for_update and self.connection.features.has_select_for_update:
+                if self.query.select_for_share and self.query.select_for_update:
+                    raise NotSupportedError('Cannot use FOR SHARE and FOR UPDATE in the same query.')
+
+                elif self.query.select_for_share and self.connection.features.has_select_for_share:
+                    if self.connection.get_autocommit():
+                        raise TransactionManagementError('select_for_share cannot be used outside of a transaction.')
+
+                    if with_limit_offset and not self.connection.features.supports_select_for_share_with_limit:
+                        raise NotSupportedError(
+                            'LIMIT/OFFSET is not supported with '
+                            'select_for_share on this database backend.'
+                        )
+                    nowait = self.query.select_for_share_nowait
+                    skip_locked = self.query.select_for_share_skip_locked
+                    of = self.query.select_for_share_of
+                    key = self.query.select_for_key_share
+                    # If it's a NOWAIT/SKIP LOCKED/OF/KEY query but the backend
+                    # doesn't support it, raise NotSupportedError to prevent a
+                    # possible deadlock.
+                    if nowait and not self.connection.features.has_select_for_share_nowait:
+                        raise NotSupportedError('NOWAIT is not supported on this database backend.')
+                    elif skip_locked and not self.connection.features.has_select_for_share_skip_locked:
+                        raise NotSupportedError('SKIP LOCKED is not supported on this database backend.')
+                    elif of and not self.connection.features.has_select_for_share_of:
+                        raise NotSupportedError('FOR SHARE OF is not supported on this database backend.')
+                    elif key and not self.connection.features.has_select_for_key_share:
+                        raise NotSupportedError(
+                            'FOR KEY SHARE is not supported on this database '
+                            'backend.'
+                        )
+                    for_share_part = self.connection.ops.for_share_sql(
+                        nowait=nowait,
+                        skip_locked=skip_locked,
+                        of=self.get_select_for_share_of_arguments(),
+                        key=key,
+                    )
+
+                elif self.query.select_for_update and self.connection.features.has_select_for_update:
                     if self.connection.get_autocommit():
                         raise TransactionManagementError('select_for_update cannot be used outside of a transaction.')
 
@@ -618,7 +656,9 @@ class SQLCompiler:
             if with_limit_offset:
                 result.append(self.connection.ops.limit_offset_sql(self.query.low_mark, self.query.high_mark))
 
-            if for_update_part and not self.connection.features.for_update_after_from:
+            if for_share_part:
+                result.append(for_share_part)
+            elif for_update_part and not self.connection.features.for_update_after_from:
                 result.append(for_update_part)
 
             if self.query.subquery and extra_select:
@@ -985,10 +1025,10 @@ class SQLCompiler:
                 )
         return related_klass_infos
 
-    def get_select_for_update_of_arguments(self):
+    def _get_select_for_share_or_update_of_arguments(self, names, supports_columns, lock_type):
         """
-        Return a quoted list of arguments for the SELECT FOR UPDATE OF part of
-        the query.
+        Return a quoted list of arguments for the SELECT FOR SHARE/UPDATE OF
+        part of the query.
         """
         def _get_parent_klass_info(klass_info):
             concrete_model = klass_info['model']._meta.concrete_model
@@ -1044,9 +1084,10 @@ class SQLCompiler:
                     (path, klass_info)
                     for klass_info in klass_info.get('related_klass_infos', [])
                 )
+
         result = []
         invalid_names = []
-        for name in self.query.select_for_update_of:
+        for name in names:
             klass_info = self.klass_info
             if name == 'self':
                 col = _get_first_selected_col_from_model(klass_info)
@@ -1071,20 +1112,35 @@ class SQLCompiler:
                     continue
                 col = _get_first_selected_col_from_model(klass_info)
             if col is not None:
-                if self.connection.features.select_for_update_of_column:
+                if supports_columns:
                     result.append(self.compile(col)[0])
                 else:
                     result.append(self.quote_name_unless_alias(col.alias))
         if invalid_names:
             raise FieldError(
-                'Invalid field name(s) given in select_for_update(of=(...)): %s. '
+                'Invalid field name(s) given in select_for_%s(of=(...)): %s. '
                 'Only relational fields followed in the query are allowed. '
                 'Choices are: %s.' % (
+                    lock_type,
                     ', '.join(invalid_names),
                     ', '.join(_get_field_choices()),
                 )
             )
         return result
+
+    def get_select_for_share_of_arguments(self):
+        return self._get_select_for_share_or_update_of_arguments(
+            self.query.select_for_share_of,
+            self.connection.features.select_for_share_of_column,
+            lock_type='share',
+        )
+
+    def get_select_for_update_of_arguments(self):
+        return self._get_select_for_share_or_update_of_arguments(
+            self.query.select_for_update_of,
+            self.connection.features.select_for_update_of_column,
+            lock_type='update',
+        )
 
     def deferred_to_columns(self):
         """

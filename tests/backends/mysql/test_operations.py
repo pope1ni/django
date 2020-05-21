@@ -2,6 +2,7 @@ import unittest
 
 from django.core.management.color import no_style
 from django.db import connection
+from django.db.backends.mysql.operations import DatabaseOperations
 from django.test import SimpleTestCase
 
 from ..models import Person, Tag
@@ -45,3 +46,23 @@ class MySQLOperationsTests(SimpleTestCase):
                         'SET FOREIGN_KEY_CHECKS = 1;',
                     ],
                 )
+
+    def test_for_share_sql(self):
+        with mock.MagicMock() as _connection:
+            _connection.mysql_version = (8, 0, 1)
+            _connection.mysql_is_mariadb = False
+            operations = DatabaseOperations(_connection)
+            self.assertIs(operations.for_share_sql(), 'FOR SHARE')
+            self.assertIs(operations.for_share_sql(nowait=True), 'FOR SHARE NOWAIT')
+        with mock.MagicMock() as _connection:
+            _connection.mysql_version = (8, 0, 0)
+            _connection.mysql_is_mariadb = False
+            operations = DatabaseOperations(_connection)
+            self.assertIs(operations.for_share_sql(), 'LOCK IN SHARE MODE')
+            self.assertIs(operations.for_share_sql(nowait=True), 'LOCK IN SHARE MODE NOWAIT')
+        with mock.MagicMock() as _connection:
+            _connection.mysql_version = (10, 5, 0)
+            _connection.mysql_is_mariadb = True
+            operations = DatabaseOperations(_connection)
+            self.assertIs(operations.for_share_sql(), 'LOCK IN SHARE MODE')
+            self.assertIs(operations.for_share_sql(nowait=True), 'LOCK IN SHARE MODE NOWAIT')

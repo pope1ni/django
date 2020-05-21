@@ -582,6 +582,7 @@ class ManagerTest(SimpleTestCase):
         'first',
         'last',
         'order_by',
+        'select_for_share',
         'select_for_update',
         'select_related',
         'prefetch_related',

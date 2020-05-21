@@ -89,19 +89,26 @@ class FilteredRelationTests(TestCase):
                 (self.book4, self.author1),
             ], lambda x: (x, x.author_join))
 
-    @skipUnlessDBFeature('has_select_for_update', 'has_select_for_update_of')
-    def test_select_related_foreign_key_for_update_of(self):
-        with transaction.atomic():
-            qs = Book.objects.annotate(
-                author_join=FilteredRelation('author'),
-            ).select_related('author_join').select_for_update(of=('self',)).order_by('pk')
-            with self.assertNumQueries(1):
-                self.assertQuerysetEqual(qs, [
-                    (self.book1, self.author1),
-                    (self.book2, self.author2),
-                    (self.book3, self.author2),
-                    (self.book4, self.author1),
-                ], lambda x: (x, x.author_join))
+    def test_select_related_foreign_key_for_share_or_update_of(self):
+        for operation, flags in [
+            ('select_for_share', ['has_select_for_share', 'has_select_for_share_of']),
+            ('select_for_update', ['has_select_for_update', 'has_select_for_update_of']),
+        ]:
+            if not all(getattr(connection.features, flag) for flag in flags):
+                continue  # XXX: Cannot skip subtests, see bpo-35327.
+            with self.subTest(operation), transaction.atomic():
+                qs = Book.objects.annotate(
+                    author_join=FilteredRelation('author'),
+                ).select_related('author_join')
+                qs = getattr(qs, operation)(of=['self'])
+                qs = qs.order_by('pk')
+                with self.assertNumQueries(1):
+                    self.assertQuerysetEqual(qs, [
+                        (self.book1, self.author1),
+                        (self.book2, self.author2),
+                        (self.book3, self.author2),
+                        (self.book4, self.author1),
+                    ], lambda x: (x, x.author_join))
 
     def test_without_join(self):
         self.assertSequenceEqual(

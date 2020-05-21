@@ -189,6 +189,11 @@ class Query(BaseExpression):
         self.low_mark, self.high_mark = 0, None  # Used for offset/limit
         self.distinct = False
         self.distinct_fields = ()
+        self.select_for_share = False
+        self.select_for_share_nowait = False
+        self.select_for_share_skip_locked = False
+        self.select_for_share_of = ()
+        self.select_for_key_share = False
         self.select_for_update = False
         self.select_for_update_nowait = False
         self.select_for_update_skip_locked = False
@@ -453,6 +458,7 @@ class Query(BaseExpression):
             inner_query = self.clone()
             inner_query.subquery = True
             outer_query = AggregateQuery(self.model, inner_query)
+            inner_query.select_for_share = False
             inner_query.select_for_update = False
             inner_query.select_related = False
             inner_query.set_annotation_mask(self.annotation_select)
@@ -502,6 +508,7 @@ class Query(BaseExpression):
 
         outer_query.clear_ordering(True)
         outer_query.clear_limits()
+        outer_query.select_for_share = False
         outer_query.select_for_update = False
         outer_query.select_related = False
         compiler = outer_query.get_compiler(using)
@@ -1050,9 +1057,10 @@ class Query(BaseExpression):
         clone.bump_prefix(query)
         clone.subquery = True
         # It's safe to drop ordering if the queryset isn't using slicing,
-        # distinct(*fields) or select_for_update().
+        # distinct(*fields), select_for_share() or select_for_update().
         if (self.low_mark == 0 and self.high_mark is None and
                 not self.distinct_fields and
+                not self.select_for_share and
                 not self.select_for_update):
             clone.clear_ordering(True)
         clone.where.resolve_expression(query, *args, **kwargs)

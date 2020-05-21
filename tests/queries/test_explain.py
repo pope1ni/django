@@ -19,6 +19,7 @@ class ExplainTests(TestCase):
             Tag.objects.filter(name='test').annotate(Count('children')),
             Tag.objects.filter(name='test').values_list('name'),
             Tag.objects.order_by().union(Tag.objects.order_by().filter(name='test')),
+            Tag.objects.all().select_for_share().filter(name='test'),
             Tag.objects.all().select_for_update().filter(name='test'),
         ]
         supported_formats = connection.features.supported_explain_formats

@@ -160,6 +160,16 @@ class DatabaseOperations(BaseDatabaseOperations):
         """
         return [(None, ("NULL", [], False))]
 
+    def for_share_sql(self, nowait=False, skip_locked=False, of=(), key=False):
+        """
+        Return the FOR SHARE SQL clause to lock rows for an update operation.
+        """
+        if self.connection.mysql_version < (8, 0, 1) or self.connection.mysql_is_mariadb:
+            return 'LOCK IN SHARE MODE%s' % (
+                ' NOWAIT' if nowait else '',
+            )
+        return super().for_share_sql(self, nowait=nowait, skip_locked=skip_locked, of=of, key=key)
+
     def last_executed_query(self, cursor, sql, params):
         # With MySQLdb, cursor objects have an (undocumented) "_executed"
         # attribute where the exact query sent to the database is saved.
