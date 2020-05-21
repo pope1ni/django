@@ -14,8 +14,8 @@
                 [gettext_noop('Midnight'), 0],
                 [gettext_noop('6 a.m.'), 6],
                 [gettext_noop('Noon'), 12],
-                [gettext_noop('6 p.m.'), 18]
-            ]
+                [gettext_noop('6 p.m.'), 18],
+            ],
         },
         dismissClockFunc: [],
         dismissCalendarFunc: [],
@@ -407,7 +407,7 @@
             DateTimeShortcuts.calendarInputs[num].value = d.strftime(get_format('DATE_INPUT_FORMATS')[0]);
             DateTimeShortcuts.calendarInputs[num].focus();
             DateTimeShortcuts.dismissCalendar(num);
-        }
+        },
     };
 
     window.addEventListener('load', DateTimeShortcuts.init);

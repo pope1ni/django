@@ -17,7 +17,7 @@ function GeometryTypeControl(opt_options) {
             options.widget.map.removeInteraction(options.widget.interactions.draw);
             options.widget.interactions.draw = new ol.interaction.Draw({
                 features: options.widget.featureCollection,
-                type: options.type
+                type: options.type,
             });
             options.widget.map.addInteraction(options.widget.interactions.draw);
             options.widget.currentGeometryType.element.classList.remove('type-active');
@@ -30,7 +30,7 @@ function GeometryTypeControl(opt_options) {
     element.addEventListener('touchstart', switchType, false);
 
     ol.control.Control.call(this, {
-        element: element
+        element: element,
     });
 };
 ol.inherits(GeometryTypeControl, ol.control.Control);
@@ -50,7 +50,7 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
             default_lat: 0,
             default_lon: 0,
             default_zoom: 12,
-            is_collection: options.geom_name.includes('Multi') || options.geom_name.includes('Collection')
+            is_collection: options.geom_name.includes('Multi') || options.geom_name.includes('Collection'),
         };
 
         // Altering using user-provided options
@@ -69,10 +69,10 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
             map: this.map,
             source: new ol.source.Vector({
                 features: this.featureCollection,
-                useSpatialIndex: false // improve performance
+                useSpatialIndex: false, // improve performance
             }),
             updateWhileAnimating: true, // optional, for instant visual feedback
-            updateWhileInteracting: true // optional, for instant visual feedback
+            updateWhileInteracting: true, // optional, for instant visual feedback
         });
 
         // Populate and set handlers for the feature container
@@ -115,8 +115,8 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
             target: this.options.map_id,
             layers: [this.options.base_layer],
             view: new ol.View({
-                zoom: this.options.default_zoom
-            })
+                zoom: this.options.default_zoom,
+            }),
         });
         return map;
     };
@@ -128,7 +128,7 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
             deleteCondition: function(event) {
                 return ol.events.condition.shiftKeyOnly(event) &&
                     ol.events.condition.singleClick(event);
-            }
+            },
         });
 
         // Initialize the draw interaction
@@ -144,7 +144,7 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
         }
         this.interactions.draw = new ol.interaction.Draw({
             features: this.featureCollection,
-            type: geomType
+            type: geomType,
         });
 
         this.map.addInteraction(this.interactions.draw);

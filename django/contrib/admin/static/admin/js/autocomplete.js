@@ -7,10 +7,10 @@
                 data: function(params) {
                     return {
                         term: params.term,
-                        page: params.page
+                        page: params.page,
                     };
-                }
-            }
+                },
+            },
         }, options);
         $element.select2(settings);
     };

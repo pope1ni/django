@@ -45,13 +45,13 @@
             "%m/%d/%y %H:%M:%S",
             "%m/%d/%y %H:%M:%S.%f",
             "%m/%d/%y %H:%M",
-            "%m/%d/%y"
+            "%m/%d/%y",
         ],
         "DATE_FORMAT": "N j, Y",
         "DATE_INPUT_FORMATS": [
             "%Y-%m-%d",
             "%m/%d/%Y",
-            "%m/%d/%y"
+            "%m/%d/%y",
         ],
         "DECIMAL_SEPARATOR": ".",
         "FIRST_DAY_OF_WEEK": 0,
@@ -64,9 +64,9 @@
         "TIME_INPUT_FORMATS": [
             "%H:%M:%S",
             "%H:%M:%S.%f",
-            "%H:%M"
+            "%H:%M",
         ],
-        "YEAR_MONTH_FORMAT": "F Y"
+        "YEAR_MONTH_FORMAT": "F Y",
     };
 
     django.get_format = function(format_type) {

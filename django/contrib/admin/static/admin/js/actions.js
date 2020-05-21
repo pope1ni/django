@@ -63,7 +63,7 @@
         counter.textContent = interpolate(
             ngettext('%(sel)s of %(cnt)s selected', '%(sel)s of %(cnt)s selected', sel), {
                 sel: sel,
-                cnt: actions_icnt
+                cnt: actions_icnt,
             }, true);
         const allToggle = document.getElementById(options.allToggleId);
         allToggle.checked = sel === actionCheckboxes.length;
@@ -82,7 +82,7 @@
         acrossQuestions: "div.actions span.question",
         acrossClears: "div.actions span.clear",
         allToggleId: "action-toggle",
-        selectedClass: "selected"
+        selectedClass: "selected",
     };
 
     window.Actions = function(actionCheckboxes, options) {

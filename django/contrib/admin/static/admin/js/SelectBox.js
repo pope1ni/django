@@ -106,7 +106,7 @@
             for (const option of box.options) {
                 option.selected = true;
             }
-        }
+        },
     };
     window.SelectBox = SelectBox;
 }

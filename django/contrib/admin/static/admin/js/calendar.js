@@ -19,7 +19,7 @@ depends on core.js for utility functions like removeChildren or quickElement
             gettext('September'),
             gettext('October'),
             gettext('November'),
-            gettext('December')
+            gettext('December'),
         ],
         daysOfWeek: [
             pgettext('one letter Sunday', 'S'),
@@ -28,7 +28,7 @@ depends on core.js for utility functions like removeChildren or quickElement
             pgettext('one letter Wednesday', 'W'),
             pgettext('one letter Thursday', 'T'),
             pgettext('one letter Friday', 'F'),
-            pgettext('one letter Saturday', 'S')
+            pgettext('one letter Saturday', 'S'),
         ],
         firstDayOfWeek: parseInt(get_format('FIRST_DAY_OF_WEEK')),
         isLeapYear: function(year) {
@@ -140,7 +140,7 @@ depends on core.js for utility functions like removeChildren or quickElement
             }
 
             calDiv.appendChild(calTable);
-        }
+        },
     };
 
     // Calendar -- A calendar instance
@@ -200,7 +200,7 @@ depends on core.js for utility functions like removeChildren or quickElement
         drawNextYear: function() {
             this.currentYear++;
             this.drawCurrent();
-        }
+        },
     };
     window.Calendar = Calendar;
     window.CalendarNamespace = CalendarNamespace;

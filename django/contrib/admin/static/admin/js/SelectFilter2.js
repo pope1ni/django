@@ -224,7 +224,7 @@ Requires core.js and SelectBox.js.
             if ((event.which && event.which === 38) || (event.keyCode && event.keyCode === 38)) {
                 from.selectedIndex = (from.selectedIndex === 0) ? from.length - 1 : from.selectedIndex - 1;
             }
-        }
+        },
     };
 
     window.addEventListener('load', function(e) {

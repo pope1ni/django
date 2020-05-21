@@ -12,7 +12,7 @@ QUnit.module('admin.actions', {
         $('#qunit-fixture').append($('#result-table').text());
 
         Actions(document.querySelectorAll('tr input.action-select'));
-    }
+    },
 });
 
 QUnit.test('check', function(assert) {

@@ -197,7 +197,7 @@
         formCssClass: "dynamic-form", // CSS class applied to each form in a formset
         added: null, // Function called each time a new form is added
         removed: null, // Function called each time a form is deleted
-        addButton: null // Existing add button to use
+        addButton: null, // Existing add button to use
     };
 
 
@@ -255,7 +255,7 @@
                 reinitDateTimeShortCuts();
                 updateSelectFilter();
             },
-            addButton: options.addButton
+            addButton: options.addButton,
         });
 
         return $rows;
@@ -322,7 +322,7 @@
                 updateSelectFilter();
                 updateInlineLabel(row);
             },
-            addButton: options.addButton
+            addButton: options.addButton,
         });
 
         return $rows;

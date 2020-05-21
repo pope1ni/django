@@ -1,6 +1,13 @@
 {
     "rules": {
         "camelcase": ["off", {"properties": "always"}],
+        "comma-dangle": ["error", {
+            "arrays": "always-multiline",
+            "objects": "always-multiline",
+            "imports": "always-multiline",
+            "exports": "always-multiline",
+            "functions": "never"
+        }],
         "comma-spacing": ["error", {"before": false, "after": true}],
         "curly": ["error", "all"],
         "dot-notation": ["error", {"allowKeywords": true}],

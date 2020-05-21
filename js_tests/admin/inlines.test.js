@@ -13,9 +13,9 @@ QUnit.module('admin.inlines: tabular formsets', {
         this.inlineRow.tabularFormset('table.inline tr.form-row', {
             prefix: 'first',
             addText: that.addText,
-            deleteText: 'Remove'
+            deleteText: 'Remove',
         });
-    }
+    },
 });
 
 QUnit.test('no forms', function(assert) {
@@ -71,7 +71,7 @@ QUnit.test('existing add button', function(assert) {
     this.inlineRow.tabularFormset('table.inline tr', {
         prefix: 'first',
         deleteText: 'Remove',
-        addButton: addButton
+        addButton: addButton,
     });
     assert.equal(this.table.find('.add-row a').length, 0);
     addButton.click();
@@ -87,9 +87,9 @@ QUnit.module('admin.inlines: tabular formsets with validation errors', {
         this.table = $('table.inline');
         this.inlineRows = this.table.find('tr.form-row');
         this.inlineRows.tabularFormset('table.inline tr.form-row', {
-            prefix: 'second'
+            prefix: 'second',
         });
-    }
+    },
 });
 
 QUnit.test('first form has delete checkbox and no button', function(assert) {
@@ -135,9 +135,9 @@ QUnit.module('admin.inlines: tabular formsets with max_num', {
         this.maxNum.val(2);
         this.inlineRows = this.table.find('tr.form-row');
         this.inlineRows.tabularFormset('table.inline tr.form-row', {
-            prefix: 'second'
+            prefix: 'second',
         });
-    }
+    },
 });
 
 QUnit.test('does not show the add button if already at max_num', function(assert) {
@@ -163,9 +163,9 @@ QUnit.module('admin.inlines: tabular formsets with min_num', {
         this.minNum.val(2);
         this.inlineRows = this.table.find('tr.form-row');
         this.inlineRows.tabularFormset('table.inline tr.form-row', {
-            prefix: 'second'
+            prefix: 'second',
         });
-    }
+    },
 });
 
 QUnit.test('does not show the remove buttons if already at min_num', function(assert) {
