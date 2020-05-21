@@ -2,7 +2,7 @@
   "name": "Django",
   "private": true,
   "scripts": {
-    "pretest": "eslint django/ js_tests/admin/ js_tests/gis/",
+    "pretest": "eslint django/ js_tests/ tests/ Gruntfile.js",
     "test": "grunt test --verbose"
   },
   "engines": {

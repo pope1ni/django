@@ -1,1 +1,2 @@
-gettext('Static content inside app should be included.')
+'use strict';
+gettext('Static content inside app should be included.');
