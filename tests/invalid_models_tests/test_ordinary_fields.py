@@ -43,19 +43,58 @@ class AutoFieldTests(SimpleTestCase):
         ])
 
     def test_max_length_warning(self):
-        class Model(models.Model):
-            auto = models.AutoField(primary_key=True, max_length=2)
+        class ModelA(models.Model):
+            field = models.AutoField(max_length=2, primary_key=True)
 
-        field = Model._meta.get_field('auto')
-        self.assertEqual(field.check(), [
-            DjangoWarning(
-                "'max_length' is ignored when used with %s."
-                % field.__class__.__name__,
-                hint="Remove 'max_length' from field",
-                obj=field,
-                id='fields.W122',
-            ),
-        ])
+        class ModelB(models.Model):
+            field = models.BigAutoField(max_length=2, primary_key=True)
+
+        class ModelC(models.Model):
+            field = models.SmallAutoField(max_length=2, primary_key=True)
+
+        class ModelD(models.Model):
+            field = models.PositiveAutoField(max_length=2, primary_key=True)
+
+        class ModelE(models.Model):
+            field = models.PositiveBigAutoField(max_length=2, primary_key=True)
+
+        class ModelF(models.Model):
+            field = models.PositiveSmallAutoField(max_length=2, primary_key=True)
+
+        for model in (ModelA, ModelB, ModelC, ModelD, ModelE, ModelF):
+            field = model._meta.get_field('field')
+            with self.subTest(name=field.name):
+                self.assertEqual(field.check(), [
+                    DjangoWarning(
+                        "'max_length' is ignored when used with %s."
+                        % field.__class__.__name__,
+                        hint="Remove 'max_length' from field",
+                        obj=field,
+                        id='fields.W122',
+                    ),
+                ])
+
+    def test_positive_default_value(self):
+        class ModelA(models.Model):
+            field = models.PositiveAutoField(default=-1, primary_key=True)
+
+        class ModelB(models.Model):
+            field = models.PositiveBigAutoField(default=-1, primary_key=True)
+
+        class ModelC(models.Model):
+            field = models.PositiveSmallAutoField(default=-1, primary_key=True)
+
+        for model in (ModelA, ModelB, ModelC):
+            field = model._meta.get_field('field')
+            with self.subTest(name=field.name):
+                self.assertEqual(field.check(), [
+                    Error(
+                        '%s’s default cannot be negative.' % field.__class__.__name__,
+                        obj=field,
+                        id='fields.E171',
+                    )
+                ])
+
 
 
 @isolate_apps('invalid_models_tests')
