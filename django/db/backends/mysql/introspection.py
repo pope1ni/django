@@ -50,6 +50,8 @@ class DatabaseIntrospection(BaseDatabaseIntrospection):
         if description.is_unsigned:
             if field_type == 'BigIntegerField':
                 return 'PositiveBigIntegerField'
+            elif field_type == 'DecimalField':
+                return 'PositiveDecimalField'
             elif field_type == 'FloatField':
                 return 'PositiveFloatField'
             elif field_type == 'IntegerField':

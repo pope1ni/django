@@ -67,6 +67,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         return {
             **super().introspected_field_types,
             'PositiveBigIntegerField': 'BigIntegerField',
+            'PositiveDecimalField': 'DecimalField',
             'PositiveFloatField': 'FloatField',
             'PositiveIntegerField': 'IntegerField',
             'PositiveSmallIntegerField': 'SmallIntegerField',

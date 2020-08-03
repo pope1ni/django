@@ -33,10 +33,10 @@ __all__ = [
     'DateField', 'DateTimeField', 'DecimalField', 'DurationField',
     'EmailField', 'Empty', 'Field', 'FilePathField', 'FloatField',
     'GenericIPAddressField', 'IPAddressField', 'IntegerField', 'NOT_PROVIDED',
-    'NullBooleanField', 'PositiveBigIntegerField', 'PositiveFloatField',
-    'PositiveIntegerField', 'PositiveSmallIntegerField', 'SlugField',
-    'SmallAutoField', 'SmallIntegerField', 'TextField', 'TimeField',
-    'URLField', 'UUIDField',
+    'NullBooleanField', 'PositiveBigIntegerField', 'PositiveDecimalField',
+    'PositiveFloatField', 'PositiveIntegerField', 'PositiveSmallIntegerField',
+    'SlugField', 'SmallAutoField', 'SmallIntegerField', 'TextField',
+    'TimeField', 'URLField', 'UUIDField',
 ]
 
 
@@ -2311,6 +2311,13 @@ class PositiveFieldMixin:
 
     def formfield(self, **kwargs):
         return super().formfield(**{'min_value': 0, **kwargs})
+
+
+class PositiveDecimalField(PositiveFieldMixin, DecimalField):
+    description = _('Positive decimal number')
+
+    def get_internal_type(self):
+        return 'PositiveDecimalField'
 
 
 class PositiveFloatField(PositiveFieldMixin, FloatField):

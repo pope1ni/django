@@ -79,6 +79,10 @@ class BigD(models.Model):
     d = models.DecimalField(max_digits=32, decimal_places=30)
 
 
+class PositiveBigD(models.Model):
+    d = models.PositiveDecimalField(max_digits=32, decimal_places=30)
+
+
 class FloatModel(models.Model):
     size = models.FloatField()
 
