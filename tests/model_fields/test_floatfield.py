@@ -1,13 +1,14 @@
 from django.db import transaction
 from django.test import TestCase
 
-from .models import FloatModel
+from .models import FloatModel, PositiveFloatModel
 
 
-class TestFloatField(TestCase):
+class FloatFieldTests(TestCase):
+    model = FloatModel
 
     def test_float_validates_object(self):
-        instance = FloatModel(size=2.5)
+        instance = self.model(size=2.5)
         # Try setting float field to unsaved object
         instance.size = instance
         with transaction.atomic():
@@ -20,14 +21,14 @@ class TestFloatField(TestCase):
         # Set field to object on saved instance
         instance.size = instance
         msg = (
-            'Tried to update field model_fields.FloatModel.size with a model '
-            'instance, %r. Use a value compatible with FloatField.'
-        ) % instance
+            'Tried to update field model_fields.%s.size with a model '
+            'instance, %r. Use a value compatible with %s.'
+        ) % (self.model.__name__, instance, self.model._meta.get_field('size').__class__.__name__)
         with transaction.atomic():
             with self.assertRaisesMessage(TypeError, msg):
                 instance.save()
         # Try setting field to object on retrieved object
-        obj = FloatModel.objects.get(pk=instance.id)
+        obj = self.model.objects.get(pk=instance.id)
         obj.size = obj
         with self.assertRaisesMessage(TypeError, msg):
             obj.save()
@@ -47,4 +48,8 @@ class TestFloatField(TestCase):
             with self.subTest(value):
                 msg = "Field 'size' expected a number but got %r." % (value,)
                 with self.assertRaisesMessage(exception, msg):
-                    FloatModel.objects.create(size=value)
+                    self.model.objects.create(size=value)
+
+
+class PositiveFloatFieldTests(FloatFieldTests):
+    model = PositiveFloatModel

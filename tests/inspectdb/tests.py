@@ -127,6 +127,7 @@ class InspectDBTestCase(TestCase):
                                              "as this database handles decimal fields as float")
 
         assertFieldType('float_field', "models.FloatField()")
+        assertFieldType('pos_float_field', 'models.%s()' % introspected_field_types['PositiveFloatField'])
         assertFieldType('int_field', 'models.%s()' % introspected_field_types['IntegerField'])
         assertFieldType('pos_int_field', 'models.%s()' % introspected_field_types['PositiveIntegerField'])
         assertFieldType('pos_big_int_field', 'models.%s()' % introspected_field_types['PositiveBigIntegerField'])

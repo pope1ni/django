@@ -58,6 +58,7 @@ class ColumnTypes(models.Model):
     int_field = models.IntegerField()
     gen_ip_address_field = models.GenericIPAddressField(protocol="ipv4")
     pos_big_int_field = models.PositiveBigIntegerField()
+    pos_float_field = models.PositiveFloatField()
     pos_int_field = models.PositiveIntegerField()
     pos_small_int_field = models.PositiveSmallIntegerField()
     slug_field = models.SlugField()

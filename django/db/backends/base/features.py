@@ -138,6 +138,7 @@ class BaseDatabaseFeatures:
         'GenericIPAddressField': 'GenericIPAddressField',
         'IntegerField': 'IntegerField',
         'PositiveBigIntegerField': 'PositiveBigIntegerField',
+        'PositiveFloatField': 'PositiveFloatField',
         'PositiveIntegerField': 'PositiveIntegerField',
         'PositiveSmallIntegerField': 'PositiveSmallIntegerField',
         'SmallAutoField': 'SmallAutoField',

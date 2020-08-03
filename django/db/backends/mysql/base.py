@@ -122,6 +122,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'NullBooleanField': 'bool',
         'OneToOneField': 'integer',
         'PositiveBigIntegerField': 'bigint UNSIGNED',
+        'PositiveFloatField': 'double precision UNSIGNED',
         'PositiveIntegerField': 'integer UNSIGNED',
         'PositiveSmallIntegerField': 'smallint UNSIGNED',
         'SlugField': 'varchar(%(max_length)s)',
@@ -344,6 +345,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         if self.features.supports_column_check_constraints:
             check_constraints = {
                 'PositiveBigIntegerField': '`%(column)s` >= 0',
+                'PositiveFloatField': '`%(column)s` >= 0',
                 'PositiveIntegerField': '`%(column)s` >= 0',
                 'PositiveSmallIntegerField': '`%(column)s` >= 0',
             }

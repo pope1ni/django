@@ -130,6 +130,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'NullBooleanField': 'NUMBER(1)',
         'OneToOneField': 'NUMBER(11)',
         'PositiveBigIntegerField': 'NUMBER(19)',
+        'PositiveFloatField': 'DOUBLE PRECISION',
         'PositiveIntegerField': 'NUMBER(11)',
         'PositiveSmallIntegerField': 'NUMBER(11)',
         'SlugField': 'NVARCHAR2(%(max_length)s)',
@@ -145,6 +146,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'JSONField': '%(qn_column)s IS JSON',
         'NullBooleanField': '%(qn_column)s IN (0,1)',
         'PositiveBigIntegerField': '%(qn_column)s >= 0',
+        'PositiveFloatField': '%(qn_column)s >= 0',
         'PositiveIntegerField': '%(qn_column)s >= 0',
         'PositiveSmallIntegerField': '%(qn_column)s >= 0',
     }

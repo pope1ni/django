@@ -90,6 +90,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'NullBooleanField': 'boolean',
         'OneToOneField': 'integer',
         'PositiveBigIntegerField': 'bigint',
+        'PositiveFloatField': 'double precision',
         'PositiveIntegerField': 'integer',
         'PositiveSmallIntegerField': 'smallint',
         'SlugField': 'varchar(%(max_length)s)',
@@ -101,6 +102,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     }
     data_type_check_constraints = {
         'PositiveBigIntegerField': '"%(column)s" >= 0',
+        'PositiveFloatField': '"%(column)s" >= 0',
         'PositiveIntegerField': '"%(column)s" >= 0',
         'PositiveSmallIntegerField': '"%(column)s" >= 0',
     }

@@ -104,6 +104,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'NullBooleanField': 'bool',
         'OneToOneField': 'integer',
         'PositiveBigIntegerField': 'bigint unsigned',
+        'PositiveFloatField': 'real unsigned',
         'PositiveIntegerField': 'integer unsigned',
         'PositiveSmallIntegerField': 'smallint unsigned',
         'SlugField': 'varchar(%(max_length)s)',
@@ -115,6 +116,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     }
     data_type_check_constraints = {
         'PositiveBigIntegerField': '"%(column)s" >= 0',
+        'PositiveFloatField': '"%(column)s" >= 0',
         'JSONField': '(JSON_VALID("%(column)s") OR "%(column)s" IS NULL)',
         'PositiveIntegerField': '"%(column)s" >= 0',
         'PositiveSmallIntegerField': '"%(column)s" >= 0',
