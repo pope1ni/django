@@ -2296,6 +2296,25 @@ class UUIDField(Field):
 
 class PositiveFieldMixin:
 
+    def check(self, **kwargs):
+        return [
+            *super().check(**kwargs),
+            *self._check_positive_default_value(),
+        ]
+
+    def _check_positive_default_value(self):
+        default = self.get_default()
+        if default is not None and default < 0:
+            return [
+                checks.Error(
+                    '%s’s default cannot be negative.' % self.__class__.__name__,
+                    obj=self,
+                    id='fields.E171',
+                ),
+            ]
+        else:
+            return []
+
     def rel_db_type(self, connection):
         """
         Return the data type that a related field pointing to this field should

@@ -570,6 +570,19 @@ class DecimalFieldTests(SimpleTestCase):
         field = Model._meta.get_field('field')
         self.assertEqual(field.check(), [])
 
+    def test_positive_default_value(self):
+        class Model(models.Model):
+            field = models.PositiveDecimalField(default=-1, max_digits=10, decimal_places=10)
+
+        field = Model._meta.get_field('field')
+        self.assertEqual(field.check(), [
+            Error(
+                '%s’s default cannot be negative.' % field.__class__.__name__,
+                obj=field,
+                id='fields.E171',
+            )
+        ])
+
 
 @isolate_apps('invalid_models_tests')
 class FileFieldTests(SimpleTestCase):
@@ -644,6 +657,23 @@ class FilePathFieldTests(SimpleTestCase):
 
 
 @isolate_apps('invalid_models_tests')
+class FloatFieldTests(SimpleTestCase):
+
+    def test_positive_default_value(self):
+        class Model(models.Model):
+            field = models.PositiveFloatField(default=-1)
+
+        field = Model._meta.get_field('field')
+        self.assertEqual(field.check(), [
+            Error(
+                '%s’s default cannot be negative.' % field.__class__.__name__,
+                obj=field,
+                id='fields.E171',
+            )
+        ])
+
+
+@isolate_apps('invalid_models_tests')
 class GenericIPAddressFieldTests(SimpleTestCase):
 
     def test_non_nullable_blank(self):
@@ -713,6 +743,25 @@ class IntegerFieldTests(SimpleTestCase):
                         id='fields.W122',
                     )
                 ])
+
+    def test_positive_default_value(self):
+        class Model(models.Model):
+            positiveinteger = models.PositiveIntegerField(default=-1)
+            positivebiginteger = models.PositiveBigIntegerField(default=-1)
+            positivesmallinteger = models.PositiveSmallIntegerField(default=-1)
+
+        for field in Model._meta.get_fields():
+            if field.auto_created:
+                continue
+            with self.subTest(name=field.name):
+                self.assertEqual(field.check(), [
+                    Error(
+                        '%s’s default cannot be negative.' % field.__class__.__name__,
+                        obj=field,
+                        id='fields.E171',
+                    )
+                ])
+
 
 
 @isolate_apps('invalid_models_tests')

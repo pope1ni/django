@@ -195,6 +195,7 @@ Model fields
   ``<field data type>`` columns.
 * **fields.E170**: ``BinaryField``’s ``default`` cannot be a string. Use bytes
   content instead.
+* **fields.E171**: ``<field>``’s ``default`` cannot be negative.
 * **fields.E180**: ``<database>`` does not support ``JSONField``\s.
 * **fields.E900**: ``IPAddressField`` has been removed except for support in
   historical migrations.
