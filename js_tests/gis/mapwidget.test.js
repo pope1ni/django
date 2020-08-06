@@ -3,7 +3,7 @@
 
 QUnit.module('gis.OLMapWidget');
 
-QUnit.test('MapWidget.featureAdded', function(assert) {
+QUnit.test('MapWidget.featureAdded', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     const widget = new MapWidget(options);
     assert.equal(widget.featureCollection.getLength(), 1);
@@ -15,13 +15,13 @@ QUnit.test('MapWidget.featureAdded', function(assert) {
     );
 });
 
-QUnit.test('MapWidget.map_srid', function(assert) {
+QUnit.test('MapWidget.map_srid', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     const widget = new MapWidget(options);
     assert.equal(widget.map.getView().getProjection().getCode(), 'EPSG:3857', 'SRID 3857');
 });
 
-QUnit.test('MapWidget.defaultCenter', function(assert) {
+QUnit.test('MapWidget.defaultCenter', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     let widget = new MapWidget(options);
     assert.equal(widget.defaultCenter().toString(), '0,0', 'Default center at 0, 0');
@@ -36,7 +36,7 @@ QUnit.test('MapWidget.defaultCenter', function(assert) {
     assert.equal(widget.map.getView().getZoom(), 12);
 });
 
-QUnit.test('MapWidget.interactions', function(assert) {
+QUnit.test('MapWidget.interactions', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     const widget = new MapWidget(options);
     assert.equal(Object.keys(widget.interactions).length, 2);
@@ -44,7 +44,7 @@ QUnit.test('MapWidget.interactions', function(assert) {
     assert.equal(widget.interactions.modify.getActive(), true, "Modify is active with an existing point");
 });
 
-QUnit.test('MapWidget.clearFeatures', function(assert) {
+QUnit.test('MapWidget.clearFeatures', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     const widget = new MapWidget(options);
     const initial_value = document.getElementById('id_point').value;
@@ -53,14 +53,14 @@ QUnit.test('MapWidget.clearFeatures', function(assert) {
     document.getElementById('id_point').value = initial_value;
 });
 
-QUnit.test('MapWidget.multipolygon', function(assert) {
+QUnit.test('MapWidget.multipolygon', (assert) => {
     const options = {id: 'id_multipolygon', map_id: 'id_multipolygon_map', geom_name: 'MultiPolygon'};
     const widget = new MapWidget(options);
     assert.ok(widget.options.is_collection);
     assert.equal(widget.interactions.draw.getActive(), true, "Draw is active with no existing content");
 });
 
-QUnit.test('MapWidget.IsCollection', function(assert) {
+QUnit.test('MapWidget.IsCollection', (assert) => {
     const options = {id: 'id_point', map_id: 'id_point_map', geom_name: 'Point'};
     let widget = new MapWidget(options);
     assert.notOk(widget.options.is_collection);

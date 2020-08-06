@@ -3,7 +3,7 @@
 
 QUnit.module('admin.SelectFilter2');
 
-QUnit.test('init', function(assert) {
+QUnit.test('init', (assert) => {
     const $ = django.jQuery;
     $('<form><select id="id"></select></form>').appendTo('#qunit-fixture');
     $('<option value="0">A</option>').appendTo('#id');

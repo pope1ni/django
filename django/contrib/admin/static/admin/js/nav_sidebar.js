@@ -24,7 +24,7 @@
         }
         main.classList.toggle('shifted', navSidebarIsOpen === 'true');
 
-        toggleNavSidebar.addEventListener('click', function() {
+        toggleNavSidebar.addEventListener('click', () => {
             if (navSidebarIsOpen === 'true') {
                 navSidebarIsOpen = 'false';
                 disableNavLinkTabbing();

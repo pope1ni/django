@@ -17,14 +17,14 @@
 
     $.fn.djangoAdminSelect2 = function(options) {
         const settings = $.extend({}, options);
-        $.each(this, function(i, element) {
+        $.each(this, (i, element) => {
             const $element = $(element);
             init($element, settings);
         });
         return this;
     };
 
-    $(function() {
+    $(() => {
         // Initialize all autocomplete widgets except the one in the template
         // form used when a new formset is added.
         $('.admin-autocomplete').not('[name*=__prefix__]').djangoAdminSelect2();

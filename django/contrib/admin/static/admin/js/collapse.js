@@ -1,7 +1,7 @@
 /*global gettext*/
 'use strict';
 {
-    window.addEventListener('load', function() {
+    window.addEventListener('load', () => {
         // Add anchor tag for Show/Hide link
         const fieldsets = document.querySelectorAll('fieldset.collapse');
         for (const [i, elem] of fieldsets.entries()) {
@@ -36,7 +36,7 @@
                 }
             }
         };
-        document.querySelectorAll('fieldset.module').forEach(function(el) {
+        document.querySelectorAll('fieldset.module').forEach((el) => {
             el.addEventListener('click', toggleFunc);
         });
     });

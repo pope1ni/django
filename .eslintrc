@@ -26,6 +26,7 @@
         "no-underscore-dangle": ["error"],
         "no-unused-vars": ["error", {"vars": "local", "args": "none"}],
         "no-var": ["error"],
+        "prefer-arrow-callback": ["error"],
         "prefer-const": ["error"],
         "quotes": ["off", "single"],
         "semi": ["error", "always"],

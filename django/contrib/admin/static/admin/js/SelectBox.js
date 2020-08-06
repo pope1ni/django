@@ -89,7 +89,7 @@
             SelectBox.redisplay(to);
         },
         sort: function(id) {
-            SelectBox.cache[id].sort(function(a, b) {
+            SelectBox.cache[id].sort((a, b) => {
                 a = a.text.toLowerCase();
                 b = b.text.toLowerCase();
                 if (a > b) {

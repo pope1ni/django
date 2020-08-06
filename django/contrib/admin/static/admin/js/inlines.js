@@ -217,11 +217,11 @@
             // If any SelectFilter widgets are a part of the new form,
             // instantiate a new SelectFilter instance for it.
             if (typeof SelectFilter !== 'undefined') {
-                $('.selectfilter').each(function(index, value) {
+                $('.selectfilter').each((index, value) => {
                     const namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], false);
                 });
-                $('.selectfilterstacked').each(function(index, value) {
+                $('.selectfilterstacked').each((index, value) => {
                     const namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], true);
                 });
@@ -234,7 +234,7 @@
                     input = field.find('input, select, textarea'),
                     dependency_list = input.data('dependency_list') || [],
                     dependencies = [];
-                $.each(dependency_list, function(i, field_name) {
+                $.each(dependency_list, (i, field_name) => {
                     dependencies.push('#' + row.find('.field-' + field_name).find('input, select, textarea').attr('id'));
                 });
                 if (dependencies.length) {
@@ -282,11 +282,11 @@
         const updateSelectFilter = function() {
             // If any SelectFilter widgets were added, instantiate a new instance.
             if (typeof SelectFilter !== "undefined") {
-                $(".selectfilter").each(function(index, value) {
+                $(".selectfilter").each((index, value) => {
                     const namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], false);
                 });
-                $(".selectfilterstacked").each(function(index, value) {
+                $(".selectfilterstacked").each((index, value) => {
                     const namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], true);
                 });
@@ -299,7 +299,7 @@
                     input = field.find('input, select, textarea'),
                     dependency_list = input.data('dependency_list') || [],
                     dependencies = [];
-                $.each(dependency_list, function(i, field_name) {
+                $.each(dependency_list, (i, field_name) => {
                     dependencies.push('#' + row.find('.form-row .field-' + field_name).find('input, select, textarea').attr('id'));
                 });
                 if (dependencies.length) {
@@ -328,7 +328,7 @@
         return $rows;
     };
 
-    $(document).ready(function() {
+    $(document).ready(() => {
         $(".js-inline-admin-formset").each(function() {
             const data = $(this).data(),
                 inlineOptions = data.inlineFormset;

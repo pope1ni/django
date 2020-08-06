@@ -109,14 +109,14 @@
             const now_link = document.createElement('a');
             now_link.href = "#";
             now_link.textContent = gettext('Now');
-            now_link.addEventListener('click', function(e) {
+            now_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.handleClockQuicklink(num, -1);
             });
             const clock_link = document.createElement('a');
             clock_link.href = '#';
             clock_link.id = DateTimeShortcuts.clockLinkName + num;
-            clock_link.addEventListener('click', function(e) {
+            clock_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 // avoid triggering the document click handler to dismiss the clock
                 e.stopPropagation();
@@ -154,7 +154,7 @@
             clock_box.className = 'clockbox module';
             clock_box.id = DateTimeShortcuts.clockDivName + num;
             document.body.appendChild(clock_box);
-            clock_box.addEventListener('click', function(e) { e.stopPropagation(); });
+            clock_box.addEventListener('click', (e) => { e.stopPropagation(); });
 
             quickElement('h2', clock_box, gettext('Choose a time'));
             const time_list = quickElement('ul', clock_box);
@@ -163,9 +163,9 @@
             // DateTimeShortcuts.clockHours.name = [['3 a.m.', 3]];
             // where name is the name attribute of the <input>.
             const name = typeof DateTimeShortcuts.clockHours[inp.name] === 'undefined' ? 'default_' : inp.name;
-            DateTimeShortcuts.clockHours[name].forEach(function(element) {
+            DateTimeShortcuts.clockHours[name].forEach((element) => {
                 const time_link = quickElement('a', quickElement('li', time_list), gettext(element[0]), 'href', '#');
-                time_link.addEventListener('click', function(e) {
+                time_link.addEventListener('click', (e) => {
                     e.preventDefault();
                     DateTimeShortcuts.handleClockQuicklink(num, element[1]);
                 });
@@ -174,12 +174,12 @@
             const cancel_p = quickElement('p', clock_box);
             cancel_p.className = 'calendar-cancel';
             const cancel_link = quickElement('a', cancel_p, gettext('Cancel'), 'href', '#');
-            cancel_link.addEventListener('click', function(e) {
+            cancel_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.dismissClock(num);
             });
 
-            document.addEventListener('keyup', function(event) {
+            document.addEventListener('keyup', (event) => {
                 if (event.which === 27) {
                     // ESC key closes popup
                     DateTimeShortcuts.dismissClock(num);
@@ -237,14 +237,14 @@
             const today_link = document.createElement('a');
             today_link.href = '#';
             today_link.appendChild(document.createTextNode(gettext('Today')));
-            today_link.addEventListener('click', function(e) {
+            today_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, 0);
             });
             const cal_link = document.createElement('a');
             cal_link.href = '#';
             cal_link.id = DateTimeShortcuts.calendarLinkName + num;
-            cal_link.addEventListener('click', function(e) {
+            cal_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 // avoid triggering the document click handler to dismiss the calendar
                 e.stopPropagation();
@@ -283,20 +283,20 @@
             cal_box.className = 'calendarbox module';
             cal_box.id = DateTimeShortcuts.calendarDivName1 + num;
             document.body.appendChild(cal_box);
-            cal_box.addEventListener('click', function(e) { e.stopPropagation(); });
+            cal_box.addEventListener('click', (e) => { e.stopPropagation(); });
 
             // next-prev links
             const cal_nav = quickElement('div', cal_box);
             const cal_nav_prev = quickElement('a', cal_nav, '<', 'href', '#');
             cal_nav_prev.className = 'calendarnav-previous';
-            cal_nav_prev.addEventListener('click', function(e) {
+            cal_nav_prev.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.drawPrev(num);
             });
 
             const cal_nav_next = quickElement('a', cal_nav, '>', 'href', '#');
             cal_nav_next.className = 'calendarnav-next';
-            cal_nav_next.addEventListener('click', function(e) {
+            cal_nav_next.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.drawNext(num);
             });
@@ -311,19 +311,19 @@
             const shortcuts = quickElement('div', cal_box);
             shortcuts.className = 'calendar-shortcuts';
             let day_link = quickElement('a', shortcuts, gettext('Yesterday'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, -1);
             });
             shortcuts.appendChild(document.createTextNode('\u00A0|\u00A0'));
             day_link = quickElement('a', shortcuts, gettext('Today'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, 0);
             });
             shortcuts.appendChild(document.createTextNode('\u00A0|\u00A0'));
             day_link = quickElement('a', shortcuts, gettext('Tomorrow'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, +1);
             });
@@ -332,11 +332,11 @@
             const cancel_p = quickElement('p', cal_box);
             cancel_p.className = 'calendar-cancel';
             const cancel_link = quickElement('a', cancel_p, gettext('Cancel'), 'href', '#');
-            cancel_link.addEventListener('click', function(e) {
+            cancel_link.addEventListener('click', (e) => {
                 e.preventDefault();
                 DateTimeShortcuts.dismissCalendar(num);
             });
-            document.addEventListener('keyup', function(event) {
+            document.addEventListener('keyup', (event) => {
                 if (event.which === 27) {
                     // ESC key closes popup
                     DateTimeShortcuts.dismissCalendar(num);

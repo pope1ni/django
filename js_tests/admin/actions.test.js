@@ -15,7 +15,7 @@ QUnit.module('admin.actions', {
     },
 });
 
-QUnit.test('check', function(assert) {
+QUnit.test('check', (assert) => {
     const $ = django.jQuery;
     assert.notOk($('.action-select').is(':checked'));
     $('#action-toggle').click();

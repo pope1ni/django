@@ -21,7 +21,7 @@
                 }
 
                 const values = [];
-                $.each(dependencies, function(i, field) {
+                $.each(dependencies, (i, field) => {
                     field = $(field);
                     if (field.val().length > 0) {
                         values.push(field.val());
@@ -31,7 +31,7 @@
             };
 
             prepopulatedField.data('_changed', false);
-            prepopulatedField.on('change', function() {
+            prepopulatedField.on('change', () => {
                 prepopulatedField.data('_changed', true);
             });
 

@@ -77,9 +77,9 @@ ol.inherits(GeometryTypeControl, ol.control.Control);
 
         // Populate and set handlers for the feature container
         const self = this;
-        this.featureCollection.on('add', function(event) {
+        this.featureCollection.on('add', (event) => {
             const feature = event.element;
-            feature.on('change', function() {
+            feature.on('change', () => {
                 self.serializeFeatures();
             });
             if (self.ready) {

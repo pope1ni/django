@@ -121,21 +121,21 @@ Requires core.js and SelectBox.js.
             clear_all.addEventListener('click', function(e) {
                 move_selection(e, this, SelectBox.move_all, field_id + '_to', field_id + '_from');
             });
-            filter_input.addEventListener('keypress', function(e) {
+            filter_input.addEventListener('keypress', (e) => {
                 SelectFilter.filter_key_press(e, field_id);
             });
-            filter_input.addEventListener('keyup', function(e) {
+            filter_input.addEventListener('keyup', (e) => {
                 SelectFilter.filter_key_up(e, field_id);
             });
-            filter_input.addEventListener('keydown', function(e) {
+            filter_input.addEventListener('keydown', (e) => {
                 SelectFilter.filter_key_down(e, field_id);
             });
-            selector_div.addEventListener('change', function(e) {
+            selector_div.addEventListener('change', (e) => {
                 if (e.target.tagName === 'SELECT') {
                     SelectFilter.refresh_icons(field_id);
                 }
             });
-            selector_div.addEventListener('dblclick', function(e) {
+            selector_div.addEventListener('dblclick', (e) => {
                 if (e.target.tagName === 'OPTION') {
                     if (e.target.closest('select').id === field_id + '_to') {
                         SelectBox.move(field_id + '_to', field_id + '_from');
@@ -145,7 +145,7 @@ Requires core.js and SelectBox.js.
                     SelectFilter.refresh_icons(field_id);
                 }
             });
-            from_box.closest('form').addEventListener('submit', function() {
+            from_box.closest('form').addEventListener('submit', () => {
                 SelectBox.select_all(field_id + '_to');
             });
             SelectBox.init(field_id + '_from');
@@ -227,8 +227,8 @@ Requires core.js and SelectBox.js.
         },
     };
 
-    window.addEventListener('load', function(e) {
-        document.querySelectorAll('select.selectfilter, select.selectfilterstacked').forEach(function(el) {
+    window.addEventListener('load', (e) => {
+        document.querySelectorAll('select.selectfilter, select.selectfilterstacked').forEach((el) => {
             const data = el.dataset;
             SelectFilter.init(el.id, data.fieldName, parseInt(data.isStacked, 10));
         });

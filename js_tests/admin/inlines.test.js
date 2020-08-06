@@ -42,7 +42,7 @@ QUnit.test('add/remove form events', function(assert) {
     const $ = django.jQuery;
     const $document = $(document);
     const addButton = this.table.find('.add-row a');
-    $document.on('formset:added', function(event, $row, formsetName) {
+    $document.on('formset:added', (event, $row, formsetName) => {
         assert.ok(true, 'event `formset:added` triggered');
         assert.equal(true, $row.is('#first-1'));
         assert.equal(formsetName, 'first');
@@ -51,7 +51,7 @@ QUnit.test('add/remove form events', function(assert) {
     addButton.click();
     const deletedRow = $('#first-1');
     const deleteLink = this.table.find('.inline-deletelink');
-    $document.on('formset:removed', function(event, $row, formsetName) {
+    $document.on('formset:removed', (event, $row, formsetName) => {
         assert.ok(true, 'event `formset:removed` triggered');
         assert.equal(true, $row.is(deletedRow));
         assert.equal(formsetName, 'first');
