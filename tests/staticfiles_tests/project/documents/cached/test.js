@@ -1,2 +1,3 @@
+/*global url*/
 'use strict';
-myVar = url("import.css");
+const myVar = url("import.css");

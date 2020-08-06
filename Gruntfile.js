@@ -1,3 +1,4 @@
+/* global module */
 'use strict';
 
 const globalThreshold = 50; // Global code coverage threshold (as a percentage)

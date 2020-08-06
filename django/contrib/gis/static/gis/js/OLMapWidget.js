@@ -32,7 +32,7 @@ function GeometryTypeControl(opt_options) {
     ol.control.Control.call(this, {
         element: element,
     });
-};
+}
 ol.inherits(GeometryTypeControl, ol.control.Control);
 
 // TODO: allow deleting individual features (#8972)

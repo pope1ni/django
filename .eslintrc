@@ -1,4 +1,5 @@
 {
+    "extends": "eslint:recommended",
     "rules": {
         "camelcase": ["off", {"properties": "always"}],
         "comma-dangle": ["error", {
@@ -19,6 +20,7 @@
         "no-alert": ["off"],
         "no-eval": ["error"],
         "no-extend-native": ["error", {"exceptions": ["Date", "String"]}],
+        "no-inner-declarations": ["off"],
         "no-multi-spaces": ["error"],
         "no-octal-escape": ["error"],
         "no-script-url": ["error"],
