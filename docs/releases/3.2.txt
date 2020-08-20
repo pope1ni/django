@@ -284,6 +284,9 @@ Models
 * The new :class:`~django.db.models.functions.Collate` function allows
   filtering and ordering by specified database collations.
 
+* :meth:`.QuerySet.explain` now supports using the ``analyze`` and ``format``
+  options at the same time on MySQL 8.0.21+.
+
 Pagination
 ~~~~~~~~~~
 

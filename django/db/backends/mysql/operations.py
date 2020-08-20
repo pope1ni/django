@@ -347,8 +347,12 @@ class DatabaseOperations(BaseDatabaseOperations):
         if analyze and self.connection.features.supports_explain_analyze:
             # MariaDB uses ANALYZE instead of EXPLAIN ANALYZE.
             prefix = 'ANALYZE' if self.connection.mysql_is_mariadb else prefix + ' ANALYZE'
-        if format and not (analyze and not self.connection.mysql_is_mariadb):
-            # Only MariaDB supports the analyze option with formats.
+        if format and not (
+            analyze and
+            not self.connection.mysql_is_mariadb and
+            self.connection.mysql_version < (8, 0, 21)
+        ):
+            # MariaDB and MySQL 8.0.21+ support the analyze option with format.
             prefix += ' FORMAT=%s' % format
         return prefix
 

@@ -89,13 +89,14 @@ class ExplainTests(TestCase):
         self.assertEqual(len(captured_queries), 1)
         prefix = 'ANALYZE ' if connection.mysql_is_mariadb else 'EXPLAIN ANALYZE '
         self.assertTrue(captured_queries[0]['sql'].startswith(prefix))
+        format_ = 'JSON' if connection.mysql_is_mariadb else 'TREE'
         with CaptureQueriesContext(connection) as captured_queries:
-            qs.explain(analyze=True, format='JSON')
+            qs.explain(analyze=True, format=format_)
         self.assertEqual(len(captured_queries), 1)
-        if connection.mysql_is_mariadb:
-            self.assertIn('FORMAT=JSON', captured_queries[0]['sql'])
+        if connection.mysql_is_mariadb or self.connection.mysql_version >= (8, 0, 21):
+            self.assertIn('FORMAT=%s' % format_, captured_queries[0]['sql'])
         else:
-            self.assertNotIn('FORMAT=JSON', captured_queries[0]['sql'])
+            self.assertNotIn('FORMAT=%s' % format_, captured_queries[0]['sql'])
 
 
 @skipIfDBFeature('supports_explaining_query_execution')
