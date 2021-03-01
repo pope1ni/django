@@ -39,12 +39,12 @@ def psycopg3_version():
 PSYCOPG3_VERSION = psycopg3_version()
 
 # Some of these import psycopg3, so import them after checking if it's installed.
-from .client import DatabaseClient                          # NOQA isort:skip
-from .creation import DatabaseCreation                      # NOQA isort:skip
-from .features import DatabaseFeatures                      # NOQA isort:skip
-from .introspection import DatabaseIntrospection            # NOQA isort:skip
-from .operations import DatabaseOperations                  # NOQA isort:skip
-from .schema import DatabaseSchemaEditor                    # NOQA isort:skip
+from ..postgresql.client import DatabaseClient                # NOQA isort:skip
+from .creation import DatabaseCreation                        # NOQA isort:skip
+from ..postgresql.features import DatabaseFeatures            # NOQA isort:skip
+from ..postgresql.introspection import DatabaseIntrospection  # NOQA isort:skip
+from .operations import DatabaseOperations                    # NOQA isort:skip
+from .schema import DatabaseSchemaEditor                      # NOQA isort:skip
 
 # TODO: psycopg3 Should be automatic
 # psycopg2.extensions.register_adapter(SafeString, psycopg2.extensions.QuotedString)
