@@ -23,12 +23,11 @@ from django.utils.version import get_version_tuple
 
 try:
     import psycopg3 as Database
+    from psycopg3.oids import postgres_types
+    from psycopg3.types.date import TimestamptzLoader
+    from psycopg3.types.text import TextLoader
 except ImportError as e:
     raise ImproperlyConfigured("Error loading psycopg3 module: %s" % e)
-
-from psycopg3.oids import postgres_types
-from psycopg3.types.date import TimestamptzLoader
-from psycopg3.types.text import TextLoader
 
 
 def psycopg3_version():
