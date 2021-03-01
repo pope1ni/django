@@ -1,4 +1,5 @@
 import ipaddress
+import re
 from django.conf import settings
 from django.db.backends.base.operations import BaseDatabaseOperations
 
@@ -214,9 +215,17 @@ class DatabaseOperations(BaseDatabaseOperations):
         # Quick and dirty replace of %s placeholders with {} placeholders
         # and use client-side composition of the query. However this is not
         # the query really passed to the server: that's composed server-side.
-        sql = SQL(sql.replace("{", "{{").replace("}", "}}").replace("%s", "{}"))
-        params = (Literal(p) for p in params) if params else ()
-        return sql.format(*params).as_string(cursor)
+        if not params:
+            return SQL(sql).format().as_string(cursor)
+        elif isinstance(params, (list, tuple)):
+            sql = sql.replace('{', '{{').replace('}', '}}').replace('%s', '{}')
+            params = (Literal(p) for p in params)
+            return SQL(sql).format(*params).as_string(cursor)
+        else:
+            sql = sql.replace('{', '{{').replace('}', '}}')
+            sql = re.sub(r'%\(([^)]+)\)s', r'{\1}', sql)
+            params = {k: Literal(v) for k, v in params.items()}
+            return SQL(sql).format(**params).as_string(cursor)
 
     def return_insert_columns(self, fields):
         if not fields:
