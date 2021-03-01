@@ -26,7 +26,7 @@ try:
 except ImportError as e:
     raise ImproperlyConfigured("Error loading psycopg3 module: %s" % e)
 
-from psycopg3.oids import builtins
+from psycopg3.oids import postgres_types
 from psycopg3.types.date import TimestamptzLoader
 from psycopg3.types.text import TextLoader
 
@@ -228,11 +228,11 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         # Register a no-op dumper to avoid a round trip from psycopg3's decode
         # to json.dumps() to json.loads(), when using a custom decoder in
         # JSONField.
-        TextLoader.register(builtins["jsonb"].oid, self.connection)
+        TextLoader.register(postgres_types["jsonb"].oid, self.connection)
 
         # Don't convert automatically from Postgres network types to Python ipaddress
-        TextLoader.register(builtins["inet"].oid, self.connection)
-        TextLoader.register(builtins["cidr"].oid, self.connection)
+        TextLoader.register(postgres_types["inet"].oid, self.connection)
+        TextLoader.register(postgres_types["cidr"].oid, self.connection)
 
     @async_unsafe
     def create_cursor(self, name=None):
@@ -247,9 +247,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         if settings.USE_TZ:
             ConfigTzLoader.timezone = self.timezone
-            ConfigTzLoader.register(builtins["timestamptz"].oid, self.connection)
+            ConfigTzLoader.register(postgres_types["timestamptz"].oid, self.connection)
         else:
-            ChopTzLoader.register(builtins["timestamptz"].oid, self.connection)
+            ChopTzLoader.register(postgres_types["timestamptz"].oid, self.connection)
 
         return cursor
 
