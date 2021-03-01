@@ -1,6 +1,3 @@
-# TODO: psycopg3
-# from psycopg2.extras import Inet
-
 import ipaddress
 from django.conf import settings
 from django.db.backends.base.operations import BaseDatabaseOperations

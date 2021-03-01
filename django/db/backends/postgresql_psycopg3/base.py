@@ -49,18 +49,6 @@ from .schema import DatabaseSchemaEditor                    # NOQA isort:skip
 # TODO: psycopg3 Should be automatic
 # psycopg2.extensions.register_adapter(SafeString, psycopg2.extensions.QuotedString)
 
-# Register support for inet[] manually so we don't have to handle the Inet()
-# TODO: psycopg3
-# object on load all the time.
-# INETARRAY_OID = 1041
-# INETARRAY = psycopg2.extensions.new_array_type(
-#     (INETARRAY_OID,),
-#     'INETARRAY',
-#     psycopg2.extensions.UNICODE,
-# )
-# psycopg2.extensions.register_type(INETARRAY)
-
-
 class DatabaseWrapper(BaseDatabaseWrapper):
     vendor = 'postgresql'
     display_name = 'PostgreSQL'
