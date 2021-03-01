@@ -52,6 +52,7 @@ from .schema import DatabaseSchemaEditor                    # NOQA isort:skip
 class DatabaseWrapper(BaseDatabaseWrapper):
     vendor = 'postgresql'
     display_name = 'PostgreSQL'
+    using_psycopg3 = True
     # This dictionary maps Field objects to their associated PostgreSQL column
     # types, as strings. Column-type strings can contain format strings; they'll
     # be interpolated against the values of Field.__dict__ before being output.

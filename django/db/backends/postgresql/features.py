@@ -105,5 +105,3 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_covering_indexes = property(operator.attrgetter('is_postgresql_11'))
     supports_covering_gist_indexes = property(operator.attrgetter('is_postgresql_12'))
     supports_non_deterministic_collations = property(operator.attrgetter('is_postgresql_12'))
-    is_psycopg2 = True
-    is_psycopg3 = False

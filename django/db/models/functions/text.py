@@ -119,7 +119,7 @@ class Concat(Func):
         sql, params = super().as_sql(compiler, connection, **extra_context)
         # We have to explicitly cast CONCAT arguments to text in psycopg3,
         # because in postgres they are defined as 'VARIADIC any'
-        if connection.features.is_psycopg3:
+        if connection.using_psycopg3:
             sql = sql.replace('%s', '%s::text')
         return sql, params
 
@@ -150,7 +150,7 @@ class Left(Func):
 
     def as_postgresql(self, compiler, connection, **extra_context):
         rv = self.as_sql(compiler, connection, **extra_context)
-        if connection.features.is_psycopg3:
+        if connection.using_psycopg3:
             from psycopg3.types.numeric import Int4
             rv[1][0] = Int4(rv[1][0])
         return rv

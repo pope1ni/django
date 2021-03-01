@@ -159,7 +159,7 @@ class PostgreSQLNumericMixin:
 
     def as_postgresql(self, compiler, connection):
         res = self.as_sql(compiler, connection)
-        if connection.features.is_psycopg3:
+        if connection.using_psycopg3:
             if self.connector in self._pg_types:
                 import psycopg3.types.numeric
                 Type = getattr(psycopg3.types.numeric, self._pg_types[self.connector])
