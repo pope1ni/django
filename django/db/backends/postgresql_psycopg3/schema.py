@@ -37,17 +37,17 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
 
     def execute(self, sql, params=()):
         # Merge the query client-side, as posgres won't do it server-side.
-
-        if params is None:
-            return super().execute(sql, params)
-
-        # Convert placeholders from %s to {}
-        sql = str(sql).replace("{", "{{").replace("}", "}}")
-        sql = sql.replace("%s", "{}").replace("%%", "%")
-
-        # Merge the parameter
-        params = (psycopg3.sql.Literal(p) for p in params)
-        sql = psycopg3.sql.SQL(sql).format(*params).as_string(None)
+        if not params:
+            pass
+        elif isinstance(params, (list, tuple)):
+            sql = str(sql).replace('{', '{{').replace('}', '}}').replace('%%', '%').replace('%s', '{}')
+            params = (psycopg3.sql.Literal(p) for p in params)
+            sql = psycopg3.sql.SQL(sql).format(*params).as_string(None)
+        else:
+            sql = str(sql).replace('{', '{{').replace('}', '}}').replace('%%', '%')
+            sql = re.sub(r'%\(([^)]+)\)s', r'{\1}', sql)
+            params = {k: psycopg3.sql.Literal(v) for k, v in params.items()}
+            sql = psycopg3.sql.SQL(sql).format(**params).as_string(None)
 
         # Don't let the superclass touch anything.
         return super().execute(sql, None)
