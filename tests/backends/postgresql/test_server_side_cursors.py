@@ -42,12 +42,13 @@ class ServerSideCursorsPostgres(TestCase):
         cursors = self.inspect_cursors()
         self.assertEqual(len(cursors), num_expected)
         for cursor in cursors:
-            self.assertIn('_django_curs_', cursor.name)
-            self.assertFalse(cursor.is_scrollable)
-            self.assertFalse(cursor.is_holdable)
-            self.assertFalse(cursor.is_binary)
+            with self.subTest(cursor_name=cursor.name):
+                self.assertIn('_django_curs_', cursor.name)
+                self.assertFalse(cursor.is_scrollable)
+                self.assertFalse(cursor.is_holdable)
+                self.assertFalse(cursor.is_binary)
 
-    def asserNotUsesCursor(self, queryset):
+    def assertNotUsesCursor(self, queryset):
         self.assertUsesCursor(queryset, num_expected=0)
 
     def test_server_side_cursor(self):
@@ -86,4 +87,4 @@ class ServerSideCursorsPostgres(TestCase):
             del persons  # Close server-side cursor
 
         with self.override_db_setting(DISABLE_SERVER_SIDE_CURSORS=True):
-            self.asserNotUsesCursor(Person.objects.iterator())
+            self.assertNotUsesCursor(Person.objects.iterator())

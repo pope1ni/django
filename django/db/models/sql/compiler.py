@@ -1186,11 +1186,15 @@ class SQLCompiler:
             else:
                 return
         if chunked_fetch:
+            # In autocommit mode, the cursor will be used outside of a
+            # transaction, hence use a holdable cursor.
             cursor = self.connection.chunked_cursor()
+            kwargs = {'scrollable': False, 'hold': self.connection.autocommit}
         else:
             cursor = self.connection.cursor()
+            kwargs = {}
         try:
-            cursor.execute(sql, params)
+            cursor.execute(sql, params, **kwargs)
         except Exception:
             # Might fail for server-side cursors (e.g. connection closed)
             cursor.close()

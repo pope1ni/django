@@ -62,44 +62,45 @@ class CursorWrapper:
                 params = params or ()
                 return self.cursor.callproc(procname, params, kparams)
 
-    def execute(self, sql, params=None):
-        return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+    def execute(self, sql, params=None, **kwargs):
+        return self._execute_with_wrappers(sql, params, many=False, executor=self._execute, **kwargs)
 
-    def executemany(self, sql, param_list):
-        return self._execute_with_wrappers(sql, param_list, many=True, executor=self._executemany)
+    def executemany(self, sql, param_list, **kwargs):
+        return self._execute_with_wrappers(sql, param_list, many=True, executor=self._executemany, **kwargs)
 
-    def _execute_with_wrappers(self, sql, params, many, executor):
-        context = {'connection': self.db, 'cursor': self}
+    def _execute_with_wrappers(self, sql, params, many, executor, **kwargs):
+        context = {'connection': self.db, 'cursor': self, **kwargs}
+        executor = functools.partial(executor, **kwargs)
         for wrapper in reversed(self.db.execute_wrappers):
             executor = functools.partial(wrapper, executor)
         return executor(sql, params, many, context)
 
-    def _execute(self, sql, params, *ignored_wrapper_args):
+    def _execute(self, sql, params, *ignored_wrapper_args, **kwargs):
         self.db.validate_no_broken_transaction()
         with self.db.wrap_database_errors:
             if params is None:
                 # params default might be backend specific.
-                return self.cursor.execute(sql)
+                return self.cursor.execute(sql, **kwargs)
             else:
-                return self.cursor.execute(sql, params)
+                return self.cursor.execute(sql, params, **kwargs)
 
-    def _executemany(self, sql, param_list, *ignored_wrapper_args):
+    def _executemany(self, sql, param_list, *ignored_wrapper_args, **kwargs):
         self.db.validate_no_broken_transaction()
         with self.db.wrap_database_errors:
-            return self.cursor.executemany(sql, param_list)
+            return self.cursor.executemany(sql, param_list, **kwargs)
 
 
 class CursorDebugWrapper(CursorWrapper):
 
     # XXX callproc isn't instrumented at this time.
 
-    def execute(self, sql, params=None):
+    def execute(self, sql, params=None, **kwargs):
         with self.debug_sql(sql, params, use_last_executed_query=True):
-            return super().execute(sql, params)
+            return super().execute(sql, params, **kwargs)
 
-    def executemany(self, sql, param_list):
+    def executemany(self, sql, param_list, **kwargs):
         with self.debug_sql(sql, param_list, many=True):
-            return super().executemany(sql, param_list)
+            return super().executemany(sql, param_list, **kwargs)
 
     @contextmanager
     def debug_sql(self, sql=None, params=None, use_last_executed_query=False, many=False):
