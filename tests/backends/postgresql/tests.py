@@ -274,11 +274,15 @@ class Tests(TestCase):
     @override_settings(DEBUG=True)
     def test_copy_cursors(self):
         out = StringIO()
-        copy_expert_sql = 'COPY django_session TO STDOUT (FORMAT CSV, HEADER)'
-        with connection.cursor() as cursor:
-            cursor.copy_expert(copy_expert_sql, out)
-            cursor.copy_to(out, 'django_session')
-        self.assertEqual(
-            [q['sql'] for q in connection.queries],
-            [copy_expert_sql, 'COPY django_session TO STDOUT'],
-        )
+        copy_sql = 'COPY django_session TO STDOUT (FORMAT CSV, HEADER)'
+        if connection.using_psycopg3:
+            with connection.cursor() as cursor, cursor.copy(copy_sql) as copy_:
+                for data in copy_:
+                    out.write(data.tobytes().decode())
+            expected = [copy_sql]
+        else:
+            with connection.cursor() as cursor:
+                cursor.copy_expert(copy_sql, out)
+                cursor.copy_to(out, 'django_session')
+            expected = [copy_sql, 'COPY django_session TO STDOUT']
+        self.assertEqual([q['sql'] for q in connection.queries], expected)

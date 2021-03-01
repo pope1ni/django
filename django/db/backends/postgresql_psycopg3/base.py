@@ -361,10 +361,6 @@ class ConfigTzLoader(TimestamptzLoader):
 
 
 class CursorDebugWrapper(BaseCursorDebugWrapper):
-    def copy_expert(self, sql, file, *args):
+    def copy(self, sql):
         with self.debug_sql(sql):
-            return self.cursor.copy_expert(sql, file, *args)
-
-    def copy_to(self, file, table, *args, **kwargs):
-        with self.debug_sql(sql='COPY %s TO STDOUT' % table):
-            return self.cursor.copy_to(file, table, *args, **kwargs)
+            return self.cursor.copy(sql)
