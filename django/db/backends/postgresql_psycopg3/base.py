@@ -48,6 +48,7 @@ from .schema import DatabaseSchemaEditor                      # NOQA isort:skip
 # TODO: psycopg3 Should be automatic
 # psycopg2.extensions.register_adapter(SafeString, psycopg2.extensions.QuotedString)
 
+
 class DatabaseWrapper(BaseDatabaseWrapper):
     vendor = 'postgresql'
     display_name = 'PostgreSQL'
@@ -160,13 +161,13 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         conn_params = {}
         if settings_dict['NAME']:
             conn_params = {
-                'database': settings_dict['NAME'],
+                'dbname': settings_dict['NAME'],
                 **settings_dict['OPTIONS'],
             }
         elif settings_dict['NAME'] is None:
             # Connect to the default 'postgres' db.
             settings_dict.get('OPTIONS', {}).pop('service', None)
-            conn_params = {'database': 'postgres', **settings_dict['OPTIONS']}
+            conn_params = {'dbname': 'postgres', **settings_dict['OPTIONS']}
         else:
             conn_params = {**settings_dict['OPTIONS']}
 
@@ -192,6 +193,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         #   will set connection.isolation_level to ISOLATION_LEVEL_AUTOCOMMIT.
         # options = self.settings_dict['OPTIONS']
 
+        print(connection.isolation_level)
         # TODO: psycopg3 isolation levels
         # try:
         #     self.isolation_level = options['isolation_level']

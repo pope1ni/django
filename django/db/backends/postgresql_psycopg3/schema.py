@@ -1,3 +1,5 @@
+import re
+
 import psycopg3.sql
 
 from django.db.backends.base.schema import BaseDatabaseSchemaEditor
