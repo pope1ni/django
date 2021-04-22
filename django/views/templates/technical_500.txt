@@ -16,9 +16,9 @@ Installed Middleware:
 {% if postmortem %}Django tried loading these templates, in this order:
 {% for entry in postmortem %}
 Using engine {{ entry.backend.name }}:
-{% if entry.tried %}{% for attempt in entry.tried %}    * {{ attempt.0.loader_name }}: {{ attempt.0.name }} ({{ attempt.1 }})
-{% endfor %}{% else %}    This engine did not provide a list of tried templates.
-{% endif %}{% endfor %}
+{% for attempt in entry.tried %}    * {{ attempt.0.loader_name }}: {{ attempt.0.name }} ({{ attempt.1 }})
+{% empty %}    This engine did not provide a list of tried templates.
+{% endfor %}{% endfor %}
 {% else %}No templates were found because your 'TEMPLATES' setting is not configured.
 {% endif %}
 {% endif %}{% if template_info %}
