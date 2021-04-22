@@ -3278,13 +3278,14 @@ password box.
 
 .. attribute:: LogEntry.action_flag
 
-    The type of action logged: ``ADDITION``, ``CHANGE``, ``DELETION``.
+    The type of action logged: ``LogEntry.ActionFlag.ADDITION``,
+    ``LogEntry.ActionFlag.CHANGE``, or ``LogEntry.ActionFlag.DELETION``.
 
     For example, to get a list of all additions done through the admin::
 
-        from django.contrib.admin.models import ADDITION, LogEntry
+        from django.contrib.admin.models import LogEntry
 
-        LogEntry.objects.filter(action_flag=ADDITION)
+        LogEntry.objects.filter(action_flag=LogEntry.ActionFlag.ADDITION)
 
 .. attribute:: LogEntry.change_message
 

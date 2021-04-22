@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+from django.contrib.admin.models import LogEntry
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -26,8 +26,8 @@ class LogEntryTests(TestCase):
         )
         content_type_pk = ContentType.objects.get_for_model(Article).pk
         LogEntry.objects.log_action(
-            cls.user.pk, content_type_pk, cls.a1.pk, repr(cls.a1), CHANGE,
-            change_message='Changed something'
+            cls.user.pk, content_type_pk, cls.a1.pk, repr(cls.a1),
+            LogEntry.ActionFlag.CHANGE, change_message='Changed something',
         )
 
     def setUp(self):
@@ -173,13 +173,13 @@ class LogEntryTests(TestCase):
     def test_logentry_unicode(self):
         log_entry = LogEntry()
 
-        log_entry.action_flag = ADDITION
+        log_entry.action_flag = LogEntry.ActionFlag.ADDITION
         self.assertTrue(str(log_entry).startswith('Added '))
 
-        log_entry.action_flag = CHANGE
+        log_entry.action_flag = LogEntry.ActionFlag.CHANGE
         self.assertTrue(str(log_entry).startswith('Changed '))
 
-        log_entry.action_flag = DELETION
+        log_entry.action_flag = LogEntry.ActionFlag.DELETION
         self.assertTrue(str(log_entry).startswith('Deleted '))
 
         # Make sure custom action_flags works
@@ -193,8 +193,8 @@ class LogEntryTests(TestCase):
     def test_log_action(self):
         content_type_pk = ContentType.objects.get_for_model(Article).pk
         log_entry = LogEntry.objects.log_action(
-            self.user.pk, content_type_pk, self.a1.pk, repr(self.a1), CHANGE,
-            change_message='Changed something else',
+            self.user.pk, content_type_pk, self.a1.pk, repr(self.a1),
+            LogEntry.ActionFlag.CHANGE, change_message='Changed something else',
         )
         self.assertEqual(log_entry, LogEntry.objects.latest('id'))
 
@@ -238,7 +238,7 @@ class LogEntryTests(TestCase):
         response = self.client.post(proxy_add_url, post_data)
         self.assertRedirects(response, changelist_url)
         proxy_addition_log = LogEntry.objects.latest('id')
-        self.assertEqual(proxy_addition_log.action_flag, ADDITION)
+        self.assertEqual(proxy_addition_log.action_flag, LogEntry.ActionFlag.ADDITION)
         self.assertEqual(proxy_addition_log.content_type, proxy_content_type)
 
         # change
@@ -248,7 +248,7 @@ class LogEntryTests(TestCase):
         response = self.client.post(proxy_change_url, post_data)
         self.assertRedirects(response, changelist_url)
         proxy_change_log = LogEntry.objects.latest('id')
-        self.assertEqual(proxy_change_log.action_flag, CHANGE)
+        self.assertEqual(proxy_change_log.action_flag, LogEntry.ActionFlag.CHANGE)
         self.assertEqual(proxy_change_log.content_type, proxy_content_type)
 
         # delete
@@ -256,7 +256,7 @@ class LogEntryTests(TestCase):
         response = self.client.post(proxy_delete_url, {'post': 'yes'})
         self.assertRedirects(response, changelist_url)
         proxy_delete_log = LogEntry.objects.latest('id')
-        self.assertEqual(proxy_delete_log.action_flag, DELETION)
+        self.assertEqual(proxy_delete_log.action_flag, LogEntry.ActionFlag.DELETION)
         self.assertEqual(proxy_delete_log.content_type, proxy_content_type)
 
     def test_action_flag_choices(self):

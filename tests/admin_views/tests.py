@@ -18,7 +18,7 @@ except ImportError:
 from django.contrib import admin
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
-from django.contrib.admin.models import ADDITION, DELETION, LogEntry
+from django.contrib.admin.models import LogEntry
 from django.contrib.admin.options import TO_FIELD_VAR
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.admin.tests import AdminSeleniumTestCase
@@ -1851,7 +1851,7 @@ class AdminViewPermissionsTest(TestCase):
         self.assertEqual(addition_log.content_type_id, article_ct.pk)
         self.assertEqual(addition_log.object_id, str(new_article.pk))
         self.assertEqual(addition_log.object_repr, "Døm ikke")
-        self.assertEqual(addition_log.action_flag, ADDITION)
+        self.assertEqual(addition_log.action_flag, LogEntry.ActionFlag.ADDITION)
         self.assertEqual(addition_log.get_change_message(), "Added.")
 
         # Super can add too, but is redirected to the change list view
@@ -2202,7 +2202,7 @@ class AdminViewPermissionsTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Greetings from a deleted object')
         article_ct = ContentType.objects.get_for_model(Article)
-        logged = LogEntry.objects.get(content_type=article_ct, action_flag=DELETION)
+        logged = LogEntry.objects.get(content_type=article_ct, action_flag=LogEntry.ActionFlag.DELETION)
         self.assertEqual(logged.object_id, str(self.a1.pk))
 
     def test_delete_view_with_no_default_permissions(self):

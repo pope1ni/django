@@ -9,16 +9,6 @@ from django.utils import timezone
 from django.utils.text import get_text_list
 from django.utils.translation import gettext, gettext_lazy as _
 
-ADDITION = 1
-CHANGE = 2
-DELETION = 3
-
-ACTION_FLAG_CHOICES = (
-    (ADDITION, _('Addition')),
-    (CHANGE, _('Change')),
-    (DELETION, _('Deletion')),
-)
-
 
 class LogEntryManager(models.Manager):
     use_in_migrations = True
@@ -37,6 +27,11 @@ class LogEntryManager(models.Manager):
 
 
 class LogEntry(models.Model):
+    class ActionFlag(models.IntegerChoices):
+        ADDITION = 1, _('Addition')
+        CHANGE = 2, _('Change')
+        DELETION = 3, _('Deletion')
+
     action_time = models.DateTimeField(
         _('action time'),
         default=timezone.now,
@@ -56,7 +51,7 @@ class LogEntry(models.Model):
     object_id = models.TextField(_('object id'), blank=True, null=True)
     # Translators: 'repr' means representation (https://docs.python.org/library/functions.html#repr)
     object_repr = models.CharField(_('object repr'), max_length=200)
-    action_flag = models.PositiveSmallIntegerField(_('action flag'), choices=ACTION_FLAG_CHOICES)
+    action_flag = models.PositiveSmallIntegerField(_('action flag'), choices=ActionFlag.choices)
     # change_message is either a string or a JSON structure
     change_message = models.TextField(_('change message'), blank=True)
 
@@ -72,26 +67,16 @@ class LogEntry(models.Model):
         return str(self.action_time)
 
     def __str__(self):
-        if self.is_addition():
+        if self.action_flag == self.ActionFlag.ADDITION:
             return gettext('Added “%(object)s”.') % {'object': self.object_repr}
-        elif self.is_change():
+        if self.action_flag == self.ActionFlag.CHANGE:
             return gettext('Changed “%(object)s” — %(changes)s') % {
                 'object': self.object_repr,
                 'changes': self.get_change_message(),
             }
-        elif self.is_deletion():
+        if self.action_flag == self.ActionFlag.DELETION:
             return gettext('Deleted “%(object)s.”') % {'object': self.object_repr}
-
         return gettext('LogEntry Object')
-
-    def is_addition(self):
-        return self.action_flag == ADDITION
-
-    def is_change(self):
-        return self.action_flag == CHANGE
-
-    def is_deletion(self):
-        return self.action_flag == DELETION
 
     def get_change_message(self):
         """
@@ -148,3 +133,24 @@ class LogEntry(models.Model):
             except NoReverseMatch:
                 pass
         return None
+
+    @property
+    def link_css_class(self):
+        if self.action_flag == self.ActionFlag.ADDITION:
+            return 'addlink'
+        if self.action_flag == self.ActionFlag.CHANGE:
+            return 'changelink'
+        if self.action_flag == self.ActionFlag.DELETION:
+            return 'deletelink'
+        return ''
+
+
+def __getattr__(name):
+    if name == 'ACTION_FLAG_CHOICES':
+        value = LogEntry.ActionFlag.choices
+    elif name in ('ADDITION', 'CHANGE', 'DELETION'):
+        value = LogEntry.ActionFlag(name)
+    else:
+        raise AttributeError(f'module {__name__} has on attribute {name}')  # XXX
+    warnings.warn(f'{name} is deprecated', RemovedInDjango50Warning)  # XXX
+    return value

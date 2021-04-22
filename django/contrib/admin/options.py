@@ -807,13 +807,13 @@ class ModelAdmin(BaseModelAdmin):
 
         The default implementation creates an admin LogEntry object.
         """
-        from django.contrib.admin.models import ADDITION, LogEntry
+        from django.contrib.admin.models import LogEntry
         return LogEntry.objects.log_action(
             user_id=request.user.pk,
             content_type_id=get_content_type_for_model(object).pk,
             object_id=object.pk,
             object_repr=str(object),
-            action_flag=ADDITION,
+            action_flag=LogEntry.ActionFlag.ADDITION,
             change_message=message,
         )
 
@@ -823,13 +823,13 @@ class ModelAdmin(BaseModelAdmin):
 
         The default implementation creates an admin LogEntry object.
         """
-        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.admin.models import LogEntry
         return LogEntry.objects.log_action(
             user_id=request.user.pk,
             content_type_id=get_content_type_for_model(object).pk,
             object_id=object.pk,
             object_repr=str(object),
-            action_flag=CHANGE,
+            action_flag=LogEntry.ActionFlag.CHANGE,
             change_message=message,
         )
 
@@ -840,13 +840,13 @@ class ModelAdmin(BaseModelAdmin):
 
         The default implementation creates an admin LogEntry object.
         """
-        from django.contrib.admin.models import DELETION, LogEntry
+        from django.contrib.admin.models import LogEntry
         return LogEntry.objects.log_action(
             user_id=request.user.pk,
             content_type_id=get_content_type_for_model(object).pk,
             object_id=object.pk,
             object_repr=object_repr,
-            action_flag=DELETION,
+            action_flag=LogEntry.ActionFlag.DELETION,
         )
 
     @display(description=mark_safe('<input type="checkbox" id="action-toggle">'))
