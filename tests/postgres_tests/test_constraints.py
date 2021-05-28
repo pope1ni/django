@@ -709,14 +709,14 @@ class ExclusionConstraintTests(PostgreSQLTestCase):
         RangesModel.objects.create(ints=(51, 60))
 
     @skipUnlessDBFeature('supports_covering_gist_indexes')
-    def test_range_adjacent_include(self):
-        constraint_name = 'ints_adjacent_include'
+    def test_range_adjacent_gist_include(self):
+        constraint_name = 'ints_adjacent_gist_include'
         self.assertNotIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
         constraint = ExclusionConstraint(
             name=constraint_name,
             expressions=[('ints', RangeOperators.ADJACENT_TO)],
-            include=['decimals', 'ints'],
             index_type='gist',
+            include=['decimals', 'ints'],
         )
         with connection.schema_editor() as editor:
             editor.add_constraint(RangesModel, constraint)
@@ -728,12 +728,13 @@ class ExclusionConstraintTests(PostgreSQLTestCase):
         RangesModel.objects.create(ints=(51, 60))
 
     @skipUnlessDBFeature('supports_covering_gist_indexes')
-    def test_range_adjacent_include_condition(self):
-        constraint_name = 'ints_adjacent_include_condition'
+    def test_range_adjacent_gist_include_condition(self):
+        constraint_name = 'ints_adjacent_gist_include_condition'
         self.assertNotIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
         constraint = ExclusionConstraint(
             name=constraint_name,
             expressions=[('ints', RangeOperators.ADJACENT_TO)],
+            index_type='gist',
             include=['decimals'],
             condition=Q(id__gte=100),
         )
@@ -742,12 +743,13 @@ class ExclusionConstraintTests(PostgreSQLTestCase):
         self.assertIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
 
     @skipUnlessDBFeature('supports_covering_gist_indexes')
-    def test_range_adjacent_include_deferrable(self):
-        constraint_name = 'ints_adjacent_include_deferrable'
+    def test_range_adjacent_gist_include_deferrable(self):
+        constraint_name = 'ints_adjacent_gist_include_deferrable'
         self.assertNotIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
         constraint = ExclusionConstraint(
             name=constraint_name,
             expressions=[('ints', RangeOperators.ADJACENT_TO)],
+            index_type='gist',
             include=['decimals'],
             deferrable=Deferrable.DEFERRED,
         )
@@ -755,14 +757,15 @@ class ExclusionConstraintTests(PostgreSQLTestCase):
             editor.add_constraint(RangesModel, constraint)
         self.assertIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
 
-    def test_include_not_supported(self):
-        constraint_name = 'ints_adjacent_include_not_supported'
+    def test_gist_include_not_supported(self):
+        constraint_name = 'ints_adjacent_gist_include_not_supported'
         constraint = ExclusionConstraint(
             name=constraint_name,
             expressions=[('ints', RangeOperators.ADJACENT_TO)],
+            index_type='gist',
             include=['id'],
         )
-        msg = 'Covering exclusion constraints requires PostgreSQL 12+.'
+        msg = 'Covering exclusion constraints using a GiST index requires PostgreSQL 12+.'
         with connection.schema_editor() as editor:
             with mock.patch(
                 'django.db.backends.postgresql.features.DatabaseFeatures.supports_covering_gist_indexes',
@@ -819,12 +822,13 @@ class ExclusionConstraintTests(PostgreSQLTestCase):
         self.assertIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
 
     @skipUnlessDBFeature('supports_covering_gist_indexes')
-    def test_range_adjacent_opclasses_include(self):
-        constraint_name = 'ints_adjacent_opclasses_include'
+    def test_range_adjacent_gist_opclasses_include(self):
+        constraint_name = 'ints_adjacent_gist_opclasses_include'
         self.assertNotIn(constraint_name, self.get_constraints(RangesModel._meta.db_table))
         constraint = ExclusionConstraint(
             name=constraint_name,
             expressions=[('ints', RangeOperators.ADJACENT_TO)],
+            index_type='gist',
             opclasses=['range_ops'],
             include=['decimals'],
         )

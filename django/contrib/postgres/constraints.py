@@ -124,9 +124,12 @@ class ExclusionConstraint(BaseConstraint):
         )
 
     def check_supported(self, schema_editor):
-        if self.include and not schema_editor.connection.features.supports_covering_gist_indexes:
+        if (
+            self.include and self.index_type.lower() == 'gist' and
+            not schema_editor.connection.features.supports_covering_gist_indexes
+        ):
             raise NotSupportedError(
-                'Covering exclusion constraints requires PostgreSQL 12+.'
+                'Covering exclusion constraints using a GiST index requires PostgreSQL 12+.'
             )
 
     def deconstruct(self):
