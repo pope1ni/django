@@ -90,7 +90,12 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     def is_postgresql_13(self):
         return self.connection.pg_version >= 130000
 
+    @cached_property
+    def is_postgresql_14(self):
+        return self.connection.pg_version >= 140000
+
     has_websearch_to_tsquery = property(operator.attrgetter('is_postgresql_11'))
     supports_covering_indexes = property(operator.attrgetter('is_postgresql_11'))
     supports_covering_gist_indexes = property(operator.attrgetter('is_postgresql_12'))
+    supports_covering_spgist_indexes = property(operator.attrgetter('is_postgresql_14'))
     supports_non_deterministic_collations = property(operator.attrgetter('is_postgresql_12'))
