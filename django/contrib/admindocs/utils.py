@@ -146,7 +146,11 @@ def replace_metacharacters(pattern):
     """
     Removes unescaped metacharacters from the pattern.
     """
-    return pattern.replace('^', '').replace('$', '').replace('?', '')
+    return re.sub(
+        r'((?:^|(?<!\\))(?:\\\\)*)(\\?)([?^$])',
+        lambda m: m[1] + m[3] if m[2] else m[1],
+        pattern,
+    )
 
 
 def replace_named_groups(pattern):
