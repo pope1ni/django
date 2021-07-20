@@ -24,22 +24,6 @@ class Node:
         self.connector = connector or self.default
         self.negated = negated
 
-    # Required because django.db.models.query_utils.Q. Q. __init__() is
-    # problematic, but it is a natural Node subclass in all other respects.
-    @classmethod
-    def _new_instance(cls, children=None, connector=None, negated=False):
-        """
-        Create a new instance of this class when new Nodes (or subclasses) are
-        needed in the internal code in this class. Normally, it just shadows
-        __init__(). However, subclasses with an __init__ signature that aren't
-        an extension of Node.__init__ might need to implement this method to
-        allow a Node to create a new instance of them (if they have any extra
-        setting up to do).
-        """
-        obj = Node(children, connector, negated)
-        obj.__class__ = cls
-        return obj
-
     def __str__(self):
         template = '(NOT (%s: %s))' if self.negated else '(%s: %s)'
         return template % (self.connector, ', '.join(str(c) for c in self.children))
@@ -89,7 +73,12 @@ class Node:
         node other got squashed or not.
         """
         if self.connector != conn_type:
-            obj = self._new_instance(self.children, self.connector, self.negated)
+            # Create a new instance using Node() instead of __init__() as some
+            # subclasses, e.g. django.db.models.query_utils.Q, may implement a
+            # custom __init__() with a signature that conflicts with the one
+            # defined in Node.__init__().
+            obj = Node(self.children, self.connector, self.negated)
+            obj.__class__ = self.__class__
             self.connector = conn_type
             self.children = [obj, data]
             return data
