@@ -48,9 +48,9 @@ class Q(tree.Node):
             return other.copy() if hasattr(other, 'copy') else copy.copy(other)
         elif isinstance(other, Q) and not other:
             _, args, kwargs = self.deconstruct()
-            return type(self)(*args, **kwargs)
+            return self.__class__(*args, **kwargs)
 
-        obj = type(self)()
+        obj = self.__class__()
         obj.connector = conn
         obj.add(self, conn)
         obj.add(other, conn)
@@ -63,7 +63,7 @@ class Q(tree.Node):
         return self._combine(other, self.AND)
 
     def __invert__(self):
-        obj = type(self)()
+        obj = self.__class__()
         obj.add(self, self.AND)
         obj.negate()
         return obj
