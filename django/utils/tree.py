@@ -32,14 +32,17 @@ class Node:
         return "<%s: %s>" % (self.__class__.__name__, self)
 
     def __copy__(self):
+        # Create a new instance using Node() instead of __init__() as some
+        # subclasses, e.g. django.db.models.query_utils.Q, may implement a
+        # custom __init__() with a signature that conflicts with the one
+        # defined in Node.__init__().
         obj = Node()
         obj.__class__ = self.__class__
         obj.__dict__ = self.__dict__.copy()
         return obj
 
     def __deepcopy__(self, memodict):
-        obj = Node(connector=self.connector, negated=self.negated)
-        obj.__class__ = self.__class__
+        obj = self.copy()
         obj.children = copy.deepcopy(self.children, memodict)
         return obj
 
@@ -79,12 +82,7 @@ class Node:
         node other got squashed or not.
         """
         if self.connector != conn_type:
-            # Create a new instance using Node() instead of __init__() as some
-            # subclasses, e.g. django.db.models.query_utils.Q, may implement a
-            # custom __init__() with a signature that conflicts with the one
-            # defined in Node.__init__().
-            obj = Node(self.children, self.connector, self.negated)
-            obj.__class__ = self.__class__
+            obj = self.copy()
             self.connector = conn_type
             self.children = [obj, data]
             return data
