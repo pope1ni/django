@@ -31,6 +31,12 @@ class Node:
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self)
 
+    def __copy__(self):
+        obj = Node()
+        obj.__class__ = self.__class__
+        obj.__dict__ = self.__dict__.copy()
+        return obj
+
     def __deepcopy__(self, memodict):
         obj = Node(connector=self.connector, negated=self.negated)
         obj.__class__ = self.__class__
