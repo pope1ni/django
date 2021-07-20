@@ -41,12 +41,11 @@ class Q(tree.Node):
         super().__init__(children=[*args, *sorted(kwargs.items())], connector=_connector, negated=_negated)
 
     def _combine(self, other, conn):
-        if not(isinstance(other, Q) or getattr(other, 'conditional', False) is True):
+        if getattr(other, 'conditional', False) is False:
             raise TypeError(other)
-
         if not self:
             return other.copy() if hasattr(other, 'copy') else copy.copy(other)
-        elif isinstance(other, Q) and not other:
+        if not other and isinstance(other, Q):
             return self.copy()
 
         obj = self.__class__(_connector=conn)
