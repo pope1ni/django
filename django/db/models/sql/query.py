@@ -176,7 +176,6 @@ class Query(BaseExpression):
         # Note that annotations go to annotations dictionary.
         self.select = ()
         self.where = WhereNode()
-        self.where_class = WhereNode
         # The group_by attribute can have one of the following forms:
         #  - None: no group by at all in the query
         #  - A tuple of expressions: group by (at least) those expressions.
@@ -1265,7 +1264,7 @@ class Query(BaseExpression):
             condition = filter_expr.resolve_expression(self, allow_joins=allow_joins)
             if not isinstance(condition, Lookup):
                 condition = self.build_lookup(['exact'], condition, True)
-            return self.where_class([condition], connector=AND), []
+            return WhereNode([condition], connector=AND), []
         arg, value = filter_expr
         if not arg:
             raise FieldError("Cannot parse keyword query %r" % arg)
@@ -1286,7 +1285,7 @@ class Query(BaseExpression):
 
         if reffed_expression:
             condition = self.build_lookup(lookups, reffed_expression, value)
-            return self.where_class([condition], connector=AND), []
+            return WhereNode([condition], connector=AND), []
 
         opts = self.get_meta()
         alias = self.get_initial_alias()
@@ -1329,7 +1328,7 @@ class Query(BaseExpression):
 
         condition = self.build_lookup(lookups, col, value)
         lookup_type = condition.lookup_name
-        clause = self.where_class([condition], connector=AND)
+        clause = WhereNode([condition], connector=AND)
 
         require_outer = lookup_type == 'isnull' and condition.rhs is True and not current_negated
         if current_negated and (lookup_type != 'isnull' or condition.rhs is False) and condition.rhs is not None:
@@ -1391,8 +1390,7 @@ class Query(BaseExpression):
         connector = q_object.connector
         current_negated = current_negated ^ q_object.negated
         branch_negated = branch_negated or q_object.negated
-        target_clause = self.where_class(connector=connector,
-                                         negated=q_object.negated)
+        target_clause = WhereNode(connector=connector, negated=q_object.negated)
         joinpromoter = JoinPromoter(q_object.connector, len(q_object.children), current_negated)
         for child in q_object.children:
             child_clause, needed_inner = self.build_filter(
@@ -1411,7 +1409,7 @@ class Query(BaseExpression):
         connector = q_object.connector
         current_negated ^= q_object.negated
         branch_negated = branch_negated or q_object.negated
-        target_clause = self.where_class(connector=connector, negated=q_object.negated)
+        target_clause = WhereNode(connector=connector, negated=q_object.negated)
         for child in q_object.children:
             if isinstance(child, Node):
                 child_clause = self.build_filtered_relation_q(
@@ -2304,8 +2302,7 @@ class Query(BaseExpression):
             select_fields = [r[0] for r in join_field.related_fields]
             select_alias = lookup_tables[trimmed_paths + 1]
             self.unref_alias(lookup_tables[trimmed_paths])
-            extra_restriction = join_field.get_extra_restriction(
-                self.where_class, None, lookup_tables[trimmed_paths + 1])
+            extra_restriction = join_field.get_extra_restriction(None, lookup_tables[trimmed_paths + 1])
             if extra_restriction:
                 self.where.add(extra_restriction, AND)
         else:
