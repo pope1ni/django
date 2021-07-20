@@ -5,7 +5,6 @@ Factored out from django.db.models.query to avoid making the main module very
 large and/or so that they can be used by other modules without getting into
 circular import difficulties.
 """
-import copy
 import functools
 import inspect
 from collections import namedtuple
@@ -44,7 +43,7 @@ class Q(tree.Node):
         if getattr(other, 'conditional', False) is False:
             raise TypeError(other)
         if not self:
-            return other.copy() if hasattr(other, 'copy') else copy.copy(other)
+            return other.copy()
         if not other and isinstance(other, Q):
             return self.copy()
 
