@@ -1504,7 +1504,6 @@ class SQLDeleteCompiler(SQLCompiler):
             pk.get_col(self.query.get_initial_alias())
         ]
         outerq = Query(self.query.model)
-        outerq.where = self.query.where_class()
         if not self.connection.features.update_can_self_select:
             # Force the materialization of the inner query to allow reference
             # to the target table on MySQL.
