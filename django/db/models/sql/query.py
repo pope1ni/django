@@ -1381,6 +1381,9 @@ class Query(BaseExpression):
     def build_where(self, filter_expr):
         return self.build_filter(filter_expr, allow_joins=False)[0]
 
+    def clear_where(self):
+        self.where = WhereNode()
+
     def _add_q(self, q_object, used_aliases, branch_negated=False,
                current_negated=False, allow_joins=True, split_subq=True,
                check_filterable=True):

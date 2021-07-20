@@ -1625,7 +1625,7 @@ class SQLUpdateCompiler(SQLCompiler):
 
         # Now we adjust the current query: reset the where clause and get rid
         # of all the tables we don't need (since they're in the sub-select).
-        self.query.where = self.query.where_class()
+        self.query.clear_where()
         if self.query.related_updates or must_pre_select:
             # Either we're using the idents in multiple update queries (so
             # don't want them to change), or the db backend doesn't support
