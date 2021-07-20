@@ -144,7 +144,7 @@ class Query(BaseExpression):
 
     compiler = 'SQLCompiler'
 
-    def __init__(self, model, where=WhereNode, alias_cols=True):
+    def __init__(self, model, alias_cols=True):
         self.model = model
         self.alias_refcount = {}
         # alias_map is the most important data structure regarding joins.
@@ -175,8 +175,8 @@ class Query(BaseExpression):
         # clause to contain other than default fields (values(), subqueries...)
         # Note that annotations go to annotations dictionary.
         self.select = ()
-        self.where = where()
-        self.where_class = where
+        self.where = WhereNode()
+        self.where_class = WhereNode
         # The group_by attribute can have one of the following forms:
         #  - None: no group by at all in the query
         #  - A tuple of expressions: group by (at least) those expressions.
