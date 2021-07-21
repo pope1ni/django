@@ -58,8 +58,8 @@ class WhereNode(tree.Node):
                 having_parts.append(c)
             else:
                 where_parts.append(c)
-        having_node = self.__class__(having_parts, self.connector, self.negated) if having_parts else None
-        where_node = self.__class__(where_parts, self.connector, self.negated) if where_parts else None
+        having_node = self.create(having_parts, self.connector, self.negated) if having_parts else None
+        where_node = self.create(where_parts, self.connector, self.negated) if where_parts else None
         return where_node, having_node
 
     def as_sql(self, compiler, connection):
@@ -140,7 +140,7 @@ class WhereNode(tree.Node):
                 self.children[pos] = child.relabeled_clone(change_map)
 
     def clone(self):
-        clone = self.__class__(connector=self.connector, negated=self.negated)
+        clone = self.create(connector=self.connector, negated=self.negated)
         for child in self.children:
             if hasattr(child, 'clone'):
                 clone.children.append(child.clone())

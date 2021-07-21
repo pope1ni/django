@@ -24,6 +24,18 @@ class Node:
         self.connector = connector or self.default
         self.negated = negated
 
+    @classmethod
+    def create(cls, children=None, connector=None, negated=False):
+        """
+        Create a new instance using Node() instead of __init__() as some
+        subclasses, e.g. django.db.models.query_utils.Q, may implement a custom
+        __init__() with a signature that conflicts with the one defined in
+        Node.__init__().
+        """
+        obj = Node(children, connector, negated)
+        obj.__class__ = cls
+        return obj
+
     def __str__(self):
         template = '(NOT (%s: %s))' if self.negated else '(%s: %s)'
         return template % (self.connector, ', '.join(str(c) for c in self.children))
@@ -32,7 +44,7 @@ class Node:
         return "<%s: %s>" % (self.__class__.__name__, self)
 
     def __deepcopy__(self, memodict):
-        obj = self.copy()
+        obj = self.create(connector=self.connector, negated=self.negated)
         obj.children = copy.deepcopy(self.children, memodict)
         return obj
 
@@ -72,7 +84,7 @@ class Node:
         node other got squashed or not.
         """
         if self.connector != conn_type:
-            obj = self.copy()
+            obj = self.create(self.children, self.connector, self.negated)
             self.connector = conn_type
             self.children = [obj, data]
             return data
@@ -95,12 +107,7 @@ class Node:
             return data
 
     def copy(self):
-        # Create a new instance using Node() instead of __init__() as some
-        # subclasses, e.g. django.db.models.query_utils.Q, may implement a
-        # custom __init__() with a signature that conflicts with the one
-        # defined in Node.__init__().
-        obj = Node()
-        obj.__class__ = self.__class__
+        obj = self.create()
         obj.__dict__ = self.__dict__.copy()
         return obj
 
