@@ -31,16 +31,6 @@ class Node:
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self)
 
-    def __copy__(self):
-        # Create a new instance using Node() instead of __init__() as some
-        # subclasses, e.g. django.db.models.query_utils.Q, may implement a
-        # custom __init__() with a signature that conflicts with the one
-        # defined in Node.__init__().
-        obj = Node()
-        obj.__class__ = self.__class__
-        obj.__dict__ = self.__dict__.copy()
-        return obj
-
     def __deepcopy__(self, memodict):
         obj = self.copy()
         obj.children = copy.deepcopy(self.children, memodict)
@@ -104,7 +94,15 @@ class Node:
             self.children.append(data)
             return data
 
-    copy = __copy__
+    def copy(self):
+        # Create a new instance using Node() instead of __init__() as some
+        # subclasses, e.g. django.db.models.query_utils.Q, may implement a
+        # custom __init__() with a signature that conflicts with the one
+        # defined in Node.__init__().
+        obj = Node()
+        obj.__class__ = self.__class__
+        obj.__dict__ = self.__dict__.copy()
+        return obj
 
     def negate(self):
         """Negate the sense of the root connector."""
